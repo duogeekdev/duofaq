@@ -12,20 +12,20 @@ if( ! class_exists( 'DuoFAQ' ) ) {
 
             $this->post_type = array(
                 'post_type'			 => 'faq',
-                'name'               => _x( 'FAQs', 'post type general name', 'sn' ),
-                'singular_name'      => _x( 'FAQ', 'post type singular name', 'sn' ),
-                'menu_name'          => _x( 'FAQ', 'admin menu', 'sn' ),
-                'name_admin_bar'     => _x( 'FAQ', 'add new on admin bar', 'sn' ),
-                'add_new'            => _x( 'Add New', 'book', 'sn' ),
-                'add_new_item'       => __( 'Add New Question', 'sn' ),
-                'new_item'           => __( 'New Question', 'sn' ),
-                'edit_item'          => __( 'Edit Question', 'sn' ),
-                'view_item'          => __( 'View Question', 'sn' ),
-                'all_items'          => __( 'All Questions', 'sn' ),
-                'search_items'       => __( 'Search Questions', 'sn' ),
-                'parent_item_colon'  => __( 'Parent Questions:', 'sn' ),
-                'not_found'          => __( 'No Questions found.', 'sn' ),
-                'not_found_in_trash' => __( 'No Questions found in Trash.', 'sn' ),
+                'name'               => _x( 'FAQs', 'post type general name', 'df' ),
+                'singular_name'      => _x( 'FAQ', 'post type singular name', 'df' ),
+                'menu_name'          => _x( 'FAQ', 'admin menu', 'df' ),
+                'name_admin_bar'     => _x( 'FAQ', 'add new on admin bar', 'df' ),
+                'add_new'            => _x( 'Add New', 'book', 'df' ),
+                'add_new_item'       => __( 'Add New Question', 'df' ),
+                'new_item'           => __( 'New Question', 'df' ),
+                'edit_item'          => __( 'Edit Question', 'df' ),
+                'view_item'          => __( 'View Question', 'df' ),
+                'all_items'          => __( 'All Questions', 'df' ),
+                'search_items'       => __( 'Search Questions', 'df' ),
+                'parent_item_colon'  => __( 'Parent Questions:', 'df' ),
+                'not_found'          => __( 'No Questions found.', 'df' ),
+                'not_found_in_trash' => __( 'No Questions found in Trash.', 'df' ),
                 'supports'			 => apply_filters( 'faq_post_type_supports', array( 'title', 'editor', 'author', 'excerpt' ) ),
                 'rewrite'			 => apply_filters( 'faq_post_type_rewrite_term', 'faq' )
             );
@@ -34,6 +34,16 @@ if( ! class_exists( 'DuoFAQ' ) ) {
 
             add_action( 'init', array( $this, 'register_faq_post_type' ) );
             add_action( 'init', array( $this, 'register_faq_taxonomies' ) );
+
+            //Adding styles and scripts
+            add_action( 'wp_enqueue_scripts', array($this, 'user_faq_styles') );
+
+            //Adding custom columns in taxonomy
+            add_action( "manage_edit-faq_categories_columns",          array($this, 'posts_columns_id') );
+            add_filter( "manage_edit-faq_categories_sortable_columns", array($this, 'posts_columns_id') );
+            add_filter( "manage_faq_categories_custom_column",         array($this, 'posts_custom_id_columns'), 10, 3 );
+
+            add_shortcode( 'duo_faq', array($this, 'faq_shortcode') );
 
         }
 
@@ -50,19 +60,19 @@ if( ! class_exists( 'DuoFAQ' ) ) {
         public function register_faq_taxonomies() {
             $taxes = array(
                 array(
-                    'tax_name'			=> 'faq_category',
-                    'name'              => _x( 'Categories', 'taxonomy general name' ),
-                    'singular_name'     => _x( 'Category', 'taxonomy singular name' ),
-                    'search_items'      => __( 'Search Categories' ),
-                    'all_items'         => __( 'All Categories' ),
-                    'parent_item'       => __( 'Parent Category' ),
-                    'parent_item_colon' => __( 'Parent Category:' ),
-                    'edit_item'         => __( 'Edit Category' ),
-                    'update_item'       => __( 'Update Category' ),
-                    'add_new_item'      => __( 'Add New Category' ),
-                    'new_item_name'     => __( 'New Category Name' ),
-                    'menu_name'         => __( 'Categories' ),
-                    'rewrite'			=> apply_filters( 'faq_category_cat_rewrite_term', 'kb_category' ),
+                    'tax_name'			=> 'faq_categories',
+                    'name'              => _x( 'Categories', 'taxonomy general name', 'df' ),
+                    'singular_name'     => _x( 'Category', 'taxonomy singular name', 'df' ),
+                    'search_items'      => __( 'Search Categories', 'df' ),
+                    'all_items'         => __( 'All Categories', 'df' ),
+                    'parent_item'       => __( 'Parent Category', 'df' ),
+                    'parent_item_colon' => __( 'Parent Category:', 'df' ),
+                    'edit_item'         => __( 'Edit Category', 'df' ),
+                    'update_item'       => __( 'Update Category', 'df' ),
+                    'add_new_item'      => __( 'Add New Category', 'df' ),
+                    'new_item_name'     => __( 'New Category Name', 'df' ),
+                    'menu_name'         => __( 'Categories', 'df' ),
+                    'rewrite'			=> apply_filters( 'faq_category_cat_rewrite_term', 'faq_categories' ),
                     'hierarchical'		=> true
                 )
             );
@@ -71,6 +81,51 @@ if( ! class_exists( 'DuoFAQ' ) ) {
                 $this->set_tax( $tax );
                 $this->register_custom_taxonomies();
             }
+        }
+
+
+        public function user_faq_styles() {
+            wp_register_script( 'accordion_js', DF_FILES_URI . '/inc/js/accordion.js', array( 'jquery' ) );
+            wp_enqueue_script( 'accordion_js' );
+
+            wp_register_style( 'accordion_css', DF_FILES_URI .'/inc/css/faqs.css' );
+            wp_enqueue_style( 'accordion_css' );
+        }
+
+
+        /*
+         *
+         * Adding column in taxonomy
+         *
+         */
+        public function posts_columns_id($columns) {
+            return $columns + array ( 'tax_id' => 'ID' );
+        }
+
+        public function posts_custom_id_columns($v, $name, $id) {
+            return $id;
+        }
+
+
+        public function faq_shortcode( $atts ){
+            extract( shortcode_atts( array(
+                'category' => ''
+            ), $atts ) );
+
+            $html = '';
+
+            if($category != '')
+            {
+                $cat = get_term( $category, 'faq_categories' );
+                include DF_FILES_DIR . '/templates/category_view.php';
+            }
+            else
+            {
+                $cat = get_terms('faq_categories');
+                include DF_FILES_DIR . '/templates/all_view.php';
+            }
+
+            return $html;
         }
 
     }
