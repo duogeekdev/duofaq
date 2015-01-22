@@ -17,15 +17,20 @@
         );
         $posts = get_posts($args);
 ?>
-<h2 class="faq-cat-title" id="<?php echo str_replace(' ', '_', trim($item->slug)) ?>"><?php echo $item->name; ?></h2>
-    <?php foreach($posts as $post) { ?>
-    <div class="smartItems">
-        <h3 class="accordion_title"><?php echo $post->post_title; ?></h3>
-        <div class="smartItemsDetails">
-            <?php echo $post->post_content; ?>
+    <div class="faq_wrap_all">
+        <h4 class="faq-cat-title" id="<?php echo str_replace(' ', '_', trim($item->slug)) ?>">
+            <?php echo $item->name; ?>
+            <span><a href="#faq-top"><?php _e( 'Go to top', 'df' ) ?></a> </span>
+        </h4>
+        <div class="smartItems">
+            <?php foreach($posts as $post) { ?>
+            <h3 class="accordion_title"><?php echo $post->post_title; ?></h3>
+            <div class="smartItemsDetails">
+                <?php echo wpautop( $post->post_content ); ?>
+            </div>
+            <?php } ?>
         </div>
     </div>
-    <?php } ?>
         <?php
     }
 ?>

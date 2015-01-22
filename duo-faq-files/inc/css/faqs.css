@@ -1,0 +1,49 @@
+.smart_all_accordion ul.faq-labels{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 40px;
+    overflow: hidden;
+}
+
+.smart_all_accordion ul.faq-labels > li{
+    list-style-type: none;
+    margin: 0;
+    float: left;
+    margin: 0 10px;
+}
+
+.smart_all_accordion ul li:first-child{
+    margin-left: 0;
+}
+
+.smart_all_accordion ul li a:hover{
+    background: rgba(175, 150, 210, 0.7);
+}
+
+.smart_all_accordion ul li a{
+    text-decoration: none;
+    display: block;
+    padding: 3px 10px;
+    background: rgba(222, 122, 232, 0.7);
+    transition: 0.5s;
+}
+
+.faq_wrap_all{
+    margin-bottom: 30px;
+}
+
+.faq_wrap_all h4{
+    border-bottom: 1px solid rgb(222, 122, 232);;
+}
+
+.faq-cat-title{
+    position: relative;;
+}
+
+.faq-cat-title span{
+    position: absolute;
+    font-size: 12px;
+    top: 3px;
+    right: 0;
+}
