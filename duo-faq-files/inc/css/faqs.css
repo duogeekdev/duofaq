@@ -18,23 +18,44 @@
 }
 
 .smart_all_accordion ul li a:hover{
-    background: rgba(175, 150, 210, 0.7);
+    color: #ffffff;
 }
 
 .smart_all_accordion ul li a{
     text-decoration: none;
     display: block;
-    padding: 3px 10px;
-    background: rgba(222, 122, 232, 0.7);
-    transition: 0.5s;
+    padding: 2px 8px;
+    border: 1px solid #9f9f9f;
+    border-radius: 4px;
+    transition: 0.2s;
+    font-size: 18px;
 }
 
 .faq_wrap_all{
     margin-bottom: 30px;
 }
 
+.faq_wrap_all p {
+    font-size: 14px;
+    line-height: 1.5;
+    font-family: "Noto Sans",sans-serif;
+    margin-bottom: 0px !important;  
+}
+
 .faq_wrap_all h4{
-    border-bottom: 1px solid rgb(222, 122, 232);;
+    margin-top: 5px !important;
+    margin-bottom: 20px !important;
+    border: 1px solid #9f9f9f;
+    padding: 5px 10px;
+    font-family: "Noto Sans",sans-serif;    
+}
+
+.faq_wrap_all h3{
+    font-size: 18px !important;
+    font-family: "Noto Sans",sans-serif;
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+    padding: 10px; 
 }
 
 .faq-cat-title{
@@ -44,6 +65,16 @@
 .faq-cat-title span{
     position: absolute;
     font-size: 12px;
-    top: 3px;
+    padding: 8px 10px;
     right: 0;
+}
+
+.faq-cat-title span a {
+    border-bottom: 0px;
+}
+
+.ui-accordion-content-active {
+    padding: 10px;
+    border: 1px solid #2ebb98;
+    margin-top: -1px;
 }

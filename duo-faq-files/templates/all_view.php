@@ -20,7 +20,7 @@
     <div class="faq_wrap_all">
         <h4 class="faq-cat-title" id="<?php echo str_replace(' ', '_', trim($item->slug)) ?>">
             <?php echo $item->name; ?>
-            <span><a href="#faq-top"><?php _e( 'Go to top', 'df' ) ?></a> </span>
+            <span><a href="#faq-top"><?php _e( 'Go To Top', 'df' ) ?></a> </span>
         </h4>
         <div class="smartItems">
             <?php foreach($posts as $post) { ?>

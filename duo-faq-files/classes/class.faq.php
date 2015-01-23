@@ -90,7 +90,8 @@ if( ! class_exists( 'DuoFAQ' ) ) {
 
             $themes = array( "UI lightness", "UI darkness", "Smoothness", "Start", "Redmond", "Sunny", "Overcast", "Le Frog", "Flick", "Pepper Grinder", "Eggplant", "Dark Hive", "Cupertino", "South Street", "Blitzer", "Humanity", "Hot Sneaks", "Excite Bike", "Vader", "Dot Luv", "Mint Choc", "Black Tie", "Trontastic", "Swanky Purse" );
 
-            wp_register_style( 'ui_accordion_css', '//code.jquery.com/ui/1.11.2/themes/' . strtolower( str_replace( ' ', '-', $themes[9] ) ) . '/jquery-ui.css' );
+            // wp_register_style( 'ui_accordion_css', '//code.jquery.com/ui/1.11.2/themes/' . strtolower( str_replace( ' ', '-', $themes[9] ) ) . '/jquery-ui.css' );
+            wp_register_style( 'ui_accordion_css', DF_FILES_URI .'/inc/css/asbestos.css' );
             wp_enqueue_style( 'ui_accordion_css' );
             wp_register_style( 'accordion_css', DF_FILES_URI .'/inc/css/faqs.css' );
             wp_enqueue_style( 'accordion_css' );

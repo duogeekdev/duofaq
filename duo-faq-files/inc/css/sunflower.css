@@ -1,0 +1,10 @@
+.entry-content h3, .entry-summary h3, .page-content h3, .comment-content h3 {
+	background: none repeat scroll 0 0 #f1c40f;
+	border: 1px solid #f1c40f;
+	color: #ffffff;
+	border-bottom: 1px solid #ffffff;
+}
+
+.smart_all_accordion ul li a:hover{
+	background: none repeat scroll 0 0 #f1c40f;
+}
