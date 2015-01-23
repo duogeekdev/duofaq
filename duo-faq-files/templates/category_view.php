@@ -1,6 +1,5 @@
 <?php ob_start(); ?>
-
-<h2><?php _e('Frequently Asked Question on', 'df'); ?> <?php echo $cat->name; ?></h2>
+<h2><?php echo $title; _e(' on', 'df'); ?> <?php echo $cat->name; ?></h2>
 <?php
     $args = array(
         'post_type' => 'faq',
@@ -9,14 +8,14 @@
     );
     $posts = get_posts($args);
 ?>
-<div class="smart_accordion accod_parent">
+<div class="smart_accordion accod_parent faq_wrap_all smartItems">
     <?php foreach($posts as $post) { ?>
-    <div class="smartItems">
-        <h3 class="accordion_title"><?php echo $post->post_title; ?></h3>
-        <div class="smartItemsDetails">
-            <?php echo wpautop( $post->post_content ); ?>
-        </div>
+
+    <h3 class="accordion_title"><?php echo $post->post_title; ?></h3>
+    <div class="smartItemsDetails">
+        <?php echo wpautop( $post->post_content ); ?>
     </div>
+
     <?php } ?>
-</div>s
+</div>
 <?php $html .= ob_get_clean();

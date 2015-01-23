@@ -26,7 +26,6 @@
     display: block;
     padding: 2px 8px;
     border: 1px solid #9f9f9f;
-    border-radius: 4px;
     transition: 0.2s;
     font-size: 18px;
 }
@@ -38,7 +37,6 @@
 .faq_wrap_all p {
     font-size: 14px;
     line-height: 1.5;
-    margin-bottom: 0px !important;  
 }
 
 .faq_wrap_all h4{
@@ -52,7 +50,8 @@
     font-size: 18px !important;
     margin-top: 0px !important;
     margin-bottom: 0px !important;
-    padding: 10px; 
+    padding: 10px;
+    cursor: pointer;
 }
 
 .faq-cat-title{
@@ -74,4 +73,8 @@
     padding: 10px;
     border: 1px solid #2ebb98;
     margin-top: -1px;
+}
+
+.smart_widget_accordion h3{
+    font-size: 13px !important;
 }

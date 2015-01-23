@@ -8,3 +8,7 @@
 .smart_all_accordion ul li a:hover{
 	background: none repeat scroll 0 0 #2c3e50;
 }
+
+.ui-accordion-content-active{
+	border: 1px solid #2c3e50 !important;
+}

@@ -1,6 +1,7 @@
 ;jQuery(function($){
     $('.smartItems').accordion({
-        heightStyle: 'content'
+        heightStyle: 'content',
+        collapsible: true
     });
 
     $(".smart_all_accordion ul.faq-labels li a, .faq-cat-title span a").click(function(e) {

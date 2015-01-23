@@ -22,6 +22,10 @@ if( ! defined( 'DF_INCLUDES_DIR' ) ) define( 'DF_INCLUDES_DIR', DF_FILES_DIR . '
 
 if( ! defined( 'DUO_FAQ_MENU_POSITION' ) ) define( 'DUO_FAQ_MENU_POSITION', '37' );
 
+$jquery_themes = apply_filters( 'df_jqueryui_themes', array( "UI lightness", "UI darkness", "Smoothness", "Start", "Redmond", "Sunny", "Overcast", "Le Frog", "Flick", "Pepper Grinder", "Eggplant", "Dark Hive", "Cupertino", "South Street", "Blitzer", "Humanity", "Hot Sneaks", "Excite Bike", "Vader", "Dot Luv", "Mint Choc", "Black Tie", "Trontastic", "Swanky Purse" ) );
+
+$custom_themes = apply_filters( 'df_custom_themes', array( 'alizerin', 'amethyst', 'asbestos', 'belize-hole', 'carrot', 'concrete', 'emerland', 'green-sea', 'midnight-blue', 'nephritis', 'orange', 'peter-river', 'pomegranate', 'pumpkin', 'sunflower', 'turquoise', 'wet-asphalt', 'wisteria' ) );
+
 require_once DF_FILES_DIR . '/helper.php';
 require_once DF_CLASSES_DIR . '/class.customPostType.php';
 require_once DF_CLASSES_DIR . '/class.faq.php';

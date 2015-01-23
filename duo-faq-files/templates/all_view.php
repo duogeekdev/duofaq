@@ -1,10 +1,10 @@
 <?php ob_start();  ?>
 
-<h2 id="faq-top"><?php _e('Frequently Asked Question', 'df') ?></h2>
+<h2 id="faq-top"><?php echo $title; ?></h2>
 <div class="smart_all_accordion accod_parent">
     <ul class="faq-labels">
         <?php foreach($cat as $item) { ?>
-        <li><a class="<?php echo $data['theme']; ?>" href="#<?php echo str_replace(' ', '_', trim($item->slug)) ?>"><?php echo $item->name ?></a></li>
+        <li><a href="#<?php echo str_replace(' ', '_', trim($item->slug)) ?>"><?php echo $item->name ?></a></li>
         <?php } ?>
     </ul>
 <?php
