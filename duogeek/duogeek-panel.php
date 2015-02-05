@@ -5,14 +5,14 @@
 if ( ! defined( 'ABSPATH' ) ) wp_die( __( 'Sorry hackers! This is not your place!', 'dp' ) );
 
 if( ! defined( 'DUO_PLUGIN_DIR' ) ) define( 'DUO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-if( ! defined( 'DUO_PLUGIN_URI' ) ) define( 'DUO_PLUGIN_URI', plugins_url() . '/duo-knowledge-base' );
+
 
 if( ! defined( 'DUO_MENU_POSITION' ) ) define( 'DUO_MENU_POSITION', '38' );
 if( ! defined( 'DUO_PANEL_SLUG' ) ) define( 'DUO_PANEL_SLUG', 'duogeek-panel' );
 if( ! defined( 'DUO_HELP_SLUG' ) ) define( 'DUO_HELP_SLUG', 'duogeek-panel-help' );
 if( ! defined( 'DUO_VERSION' ) ) define( 'DUO_VERSION', '1.1' );
 
-echo 100;
+
 if( ! class_exists( 'DuoGeekPlugins' ) ){
 
     /*
@@ -64,7 +64,7 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
                 ),
                 array(
                     'name' => 'duogeek-css',
-                    'src' => DUO_PLUGIN_URI . '/duogeek/inc/duogeek.css',
+                    'src' => DUO_PLUGIN_URI . 'duogeek/inc/duogeek.css',
                     'dep' => '',
                     'version' => DUO_VERSION,
                     'media' => 'all',
@@ -92,7 +92,7 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
                 ),
                 array(
                     'name' => 'duogeek-js',
-                    'src' => DUO_PLUGIN_URI . '/duogeek/inc/duogeek.js',
+                    'src' => DUO_PLUGIN_URI . 'duogeek/inc/duogeek.js',
                     'dep' => array( 'jquery' ),
                     'version' => DUO_VERSION,
                     'footer' => true,
@@ -106,8 +106,14 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
 
             $this->admin_enq = apply_filters( 'admin_scripts_styles', array() );
 
-            $this->admin_enq['scripts'] = array_merge( $scripts, $this->admin_enq['scripts'] );
-            $this->admin_enq['styles'] = array_merge( $styles, $this->admin_enq['styles'] );
+            if( count( $this->admin_enq ) > 0 ){
+                $this->admin_enq['scripts'] = array_merge( $scripts, $this->admin_enq['scripts'] );
+                $this->admin_enq['styles'] = array_merge( $styles, $this->admin_enq['styles'] );
+            }else{
+                $this->admin_enq['scripts'] = $scripts;
+                $this->admin_enq['styles'] = $styles;
+            }
+
 
             foreach( $this->admin_enq['scripts'] as $script ){
 
@@ -160,7 +166,7 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
                 ),
                 array(
                     'name' => 'sn-animate-css',
-                    'src' => DUO_PLUGIN_URI . '/duogeek/inc/animate.css',
+                    'src' => DUO_PLUGIN_URI . 'duogeek/inc/animate.css',
                     'dep' => '',
                     'version' => DUO_VERSION,
                     'media' => 'all',
@@ -186,8 +192,15 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
 
             $this->front_enq = apply_filters( 'front_scripts_styles', array() );
 
-            $this->front_enq['scripts'] = array_merge( $scripts, $this->front_enq['scripts'] );
-            $this->front_enq['styles'] = array_merge( $styles, $this->front_enq['styles'] );
+            if( count( $this->front_enq ) > 0 ){
+                $this->front_enq['scripts'] = array_merge( $scripts, $this->front_enq['scripts'] );
+                $this->front_enq['styles'] = array_merge( $styles, $this->front_enq['styles'] );
+            }
+            else{
+                $this->front_enq['scripts'] = $scripts;
+                $this->front_enq['styles'] = $styles;
+            }
+
 
             foreach( $this->front_enq['scripts'] as $script ){
 
@@ -246,7 +259,7 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
                 $duo_post['fontAwesome'] = isset( $duo_post['fontAwesome'] ) ? $duo_post['fontAwesome'] : 0;
                 $duo_post['animate'] = isset( $duo_post['animate'] ) ? $duo_post['animate'] : 0;
                 $duo_post['cookie'] = isset( $duo_post['cookie'] ) ? $duo_post['cookie'] : 24;
-dump($duo_post);
+                dump($duo_post);
 
                 update_option( 'DuoOptions', $duo_post );
 
@@ -288,7 +301,7 @@ dump($duo_post);
                 </div>
 
             </div>
-            <?php
+        <?php
         }
 
 
@@ -298,7 +311,10 @@ dump($duo_post);
 
             if( count( $submenus ) > 0 ) {
                 foreach( $submenus as $submenu ){
-                    add_submenu_page( DUO_PANEL_SLUG, $submenu['title'], $submenu['menu_title'], $submenu['capability'], $submenu['slug'], array( $submenu['object'], $submenu['function'] ) );
+                    if( isset( $submenu['object'] ) )
+                        add_submenu_page( DUO_PANEL_SLUG, $submenu['title'], $submenu['menu_title'], $submenu['capability'], $submenu['slug'], array( $submenu['object'], $submenu['function'] ) );
+                    else
+                        add_submenu_page( DUO_PANEL_SLUG, $submenu['title'], $submenu['menu_title'], $submenu['capability'], $submenu['slug'], $submenu['function'] );
                 }
             }
 
@@ -322,89 +338,89 @@ dump($duo_post);
             <div class="wrap duo-kb">
                 <h2><?php _e( 'Help', 'dp' ) ?></h2>
                 <?php foreach( $this->help as $key => $helps ) { ?>
-                <div id="poststuff">
-                    <div class="postbox">
-                        <h3 class="hndle"><?php echo $helps['name'] ?> <span><?php _e( 'Click to expand/collapse', 'dp' ) ?></span></h3>
-                        <div class="inside">
-                            <div class="duo_help">
-                                <ul>
-                                    <?php foreach( $helps as $key => $help ){ if( $key == 'name' ) continue; ?>
-                                        <li>
-                                            <h5><?php echo ucfirst( $key ) ?></h5>
-                                            <div class="item_details">
-                                                <ul>
-                                                    <?php foreach( $help as $details ){ ?>
-                                                        <li>
+                    <div id="poststuff">
+                        <div class="postbox">
+                            <h3 class="hndle"><?php echo $helps['name'] ?> <span><?php _e( 'Click to expand/collapse', 'dp' ) ?></span></h3>
+                            <div class="inside">
+                                <div class="duo_help">
+                                    <ul>
+                                        <?php foreach( $helps as $key => $help ){ if( $key == 'name' ) continue; ?>
+                                            <li>
+                                                <h5><?php echo ucfirst( $key ) ?></h5>
+                                                <div class="item_details">
+                                                    <ul>
+                                                        <?php foreach( $help as $details ){ ?>
+                                                            <li>
 
-                                                            <?php if( isset( $details['source'] ) ) { ?>
-                                                                <p>
-                                                                    <b>
+                                                                <?php if( isset( $details['source'] ) ) { ?>
+                                                                    <p>
+                                                                        <b>
+                                                                            <?php
+                                                                            _e( 'Source: ', 'dp' );
+                                                                            echo $details['source'];
+                                                                            ?>
+                                                                        </b>
+                                                                    </p>
+                                                                <?php } ?>
+
+                                                                <?php if( isset( $details['code'] ) ) { ?>
+                                                                    <p>
                                                                         <?php
-                                                                        _e( 'Source: ', 'dp' );
-                                                                        echo $details['source'];
+                                                                        echo '<b>';
+                                                                        _e( 'Code: ', 'dp' );
+                                                                        echo '</b>';
+                                                                        echo '<span class="code">' . $details['code'] . '</span>';
                                                                         ?>
-                                                                    </b>
-                                                                </p>
-                                                            <?php } ?>
+                                                                    </p>
+                                                                <?php } ?>
 
-                                                            <?php if( isset( $details['code'] ) ) { ?>
-                                                                <p>
-                                                                    <?php
-                                                                    echo '<b>';
-                                                                    _e( 'Code: ', 'dp' );
-                                                                    echo '</b>';
-                                                                    echo '<span class="code">' . $details['code'] . '</span>';
-                                                                    ?>
-                                                                </p>
-                                                            <?php } ?>
+                                                                <?php if( isset( $details['example'] ) ) { ?>
+                                                                    <p>
+                                                                        <?php
+                                                                        echo '<b>';
+                                                                        _e( 'Example: ', 'dp' );
+                                                                        echo '</b>';
+                                                                        echo $details['example'];
+                                                                        ?>
+                                                                    </p>
+                                                                <?php } ?>
 
-                                                            <?php if( isset( $details['example'] ) ) { ?>
-                                                                <p>
-                                                                    <?php
-                                                                    echo '<b>';
-                                                                    _e( 'Example: ', 'dp' );
-                                                                    echo '</b>';
-                                                                    echo $details['example'];
-                                                                    ?>
-                                                                </p>
-                                                            <?php } ?>
+                                                                <?php if( isset( $details['default'] ) ) { ?>
+                                                                    <p>
+                                                                        <?php
+                                                                        echo '<b>';
+                                                                        _e( 'Default: ', 'dp' );
+                                                                        echo '</b>';
+                                                                        echo $details['default'];
+                                                                        ?>
+                                                                    </p>
+                                                                <?php } ?>
 
-                                                            <?php if( isset( $details['default'] ) ) { ?>
-                                                                <p>
-                                                                    <?php
-                                                                    echo '<b>';
-                                                                    _e( 'Default: ', 'dp' );
-                                                                    echo '</b>';
-                                                                    echo $details['default'];
-                                                                    ?>
-                                                                </p>
-                                                            <?php } ?>
+                                                                <?php if( isset( $details['desc'] ) ) { ?>
+                                                                    <p>
+                                                                        <?php
+                                                                        echo '<b>';
+                                                                        _e( 'Description: ', 'dp' );
+                                                                        echo '</b>';
+                                                                        echo $details['desc'];
+                                                                        ?>
+                                                                    </p>
+                                                                <?php } ?>
 
-                                                            <?php if( isset( $details['desc'] ) ) { ?>
-                                                                <p>
-                                                                    <?php
-                                                                    echo '<b>';
-                                                                    _e( 'Description: ', 'dp' );
-                                                                    echo '</b>';
-                                                                    echo $details['desc'];
-                                                                    ?>
-                                                                </p>
-                                                            <?php } ?>
-
-                                                        </li>
-                                                    <?php } ?>
-                                                </ul>
-                                            </div>
-                                        </li>
-                                    <?php } ?>
-                                </ul>
+                                                            </li>
+                                                        <?php } ?>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                        <?php } ?>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 <?php } ?>
             </div>
-            <?php
+        <?php
         }
 
     }
