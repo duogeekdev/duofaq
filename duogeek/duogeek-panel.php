@@ -259,15 +259,37 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
                 $duo_post['fontAwesome'] = isset( $duo_post['fontAwesome'] ) ? $duo_post['fontAwesome'] : 0;
                 $duo_post['animate'] = isset( $duo_post['animate'] ) ? $duo_post['animate'] : 0;
                 $duo_post['cookie'] = isset( $duo_post['cookie'] ) ? $duo_post['cookie'] : 24;
-                dump($duo_post);
+dump($duo_post);
 
                 update_option( 'DuoOptions', $duo_post );
 
                 wp_redirect( urldecode( $_REQUEST['redirect_url'] ) . '&msg=Settings+saved+successfully.' );
 
             }
+
+            $data = file_get_contents( 'http://duogeek.com/feed/?post_type=product' );
+            $xml = simplexml_load_string( $data );
+
             ?>
             <div class="wrap">
+
+                <h2>DuoGeek Products</h2>
+
+                <div class="duoGeek_panel_holder">
+                    <ul>
+                        <?php foreach( $xml->channel->item as $product ){ ?>
+                        <li>
+                            <div class="product_image_holder">
+                                <a href="<?php echo $product->link; ?>" target="_blank"><img src="http://duogeek.com/items/<?php echo strtolower( str_replace( array( ' ', ',' ), array( '-', '' ), $product->title ) ) ?>.jpg"></a>
+                            </div>
+                            <div class="product_title_holder">
+                                <h4><?php echo $product->title; ?></h4>
+                            </div>
+                        </li>
+                        <?php } ?>
+                    </ul>
+                </div>
+
 
                 <h2><?php _e( 'DuoGeek Settings', 'dp' ) ?></h2>
 
@@ -301,7 +323,7 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
                 </div>
 
             </div>
-        <?php
+            <?php
         }
 
 
@@ -338,89 +360,89 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
             <div class="wrap duo-kb">
                 <h2><?php _e( 'Help', 'dp' ) ?></h2>
                 <?php foreach( $this->help as $key => $helps ) { ?>
-                    <div id="poststuff">
-                        <div class="postbox">
-                            <h3 class="hndle"><?php echo $helps['name'] ?> <span><?php _e( 'Click to expand/collapse', 'dp' ) ?></span></h3>
-                            <div class="inside">
-                                <div class="duo_help">
-                                    <ul>
-                                        <?php foreach( $helps as $key => $help ){ if( $key == 'name' ) continue; ?>
-                                            <li>
-                                                <h5><?php echo ucfirst( $key ) ?></h5>
-                                                <div class="item_details">
-                                                    <ul>
-                                                        <?php foreach( $help as $details ){ ?>
-                                                            <li>
+                <div id="poststuff">
+                    <div class="postbox">
+                        <h3 class="hndle"><?php echo $helps['name'] ?> <span><?php _e( 'Click to expand/collapse', 'dp' ) ?></span></h3>
+                        <div class="inside">
+                            <div class="duo_help">
+                                <ul>
+                                    <?php foreach( $helps as $key => $help ){ if( $key == 'name' ) continue; ?>
+                                        <li>
+                                            <h5><?php echo ucfirst( $key ) ?></h5>
+                                            <div class="item_details">
+                                                <ul>
+                                                    <?php foreach( $help as $details ){ ?>
+                                                        <li>
 
-                                                                <?php if( isset( $details['source'] ) ) { ?>
-                                                                    <p>
-                                                                        <b>
-                                                                            <?php
-                                                                            _e( 'Source: ', 'dp' );
-                                                                            echo $details['source'];
-                                                                            ?>
-                                                                        </b>
-                                                                    </p>
-                                                                <?php } ?>
-
-                                                                <?php if( isset( $details['code'] ) ) { ?>
-                                                                    <p>
+                                                            <?php if( isset( $details['source'] ) ) { ?>
+                                                                <p>
+                                                                    <b>
                                                                         <?php
-                                                                        echo '<b>';
-                                                                        _e( 'Code: ', 'dp' );
-                                                                        echo '</b>';
-                                                                        echo '<span class="code">' . $details['code'] . '</span>';
+                                                                        _e( 'Source: ', 'dp' );
+                                                                        echo $details['source'];
                                                                         ?>
-                                                                    </p>
-                                                                <?php } ?>
+                                                                    </b>
+                                                                </p>
+                                                            <?php } ?>
 
-                                                                <?php if( isset( $details['example'] ) ) { ?>
-                                                                    <p>
-                                                                        <?php
-                                                                        echo '<b>';
-                                                                        _e( 'Example: ', 'dp' );
-                                                                        echo '</b>';
-                                                                        echo $details['example'];
-                                                                        ?>
-                                                                    </p>
-                                                                <?php } ?>
+                                                            <?php if( isset( $details['code'] ) ) { ?>
+                                                                <p>
+                                                                    <?php
+                                                                    echo '<b>';
+                                                                    _e( 'Code: ', 'dp' );
+                                                                    echo '</b>';
+                                                                    echo '<span class="code">' . $details['code'] . '</span>';
+                                                                    ?>
+                                                                </p>
+                                                            <?php } ?>
 
-                                                                <?php if( isset( $details['default'] ) ) { ?>
-                                                                    <p>
-                                                                        <?php
-                                                                        echo '<b>';
-                                                                        _e( 'Default: ', 'dp' );
-                                                                        echo '</b>';
-                                                                        echo $details['default'];
-                                                                        ?>
-                                                                    </p>
-                                                                <?php } ?>
+                                                            <?php if( isset( $details['example'] ) ) { ?>
+                                                                <p>
+                                                                    <?php
+                                                                    echo '<b>';
+                                                                    _e( 'Example: ', 'dp' );
+                                                                    echo '</b>';
+                                                                    echo $details['example'];
+                                                                    ?>
+                                                                </p>
+                                                            <?php } ?>
 
-                                                                <?php if( isset( $details['desc'] ) ) { ?>
-                                                                    <p>
-                                                                        <?php
-                                                                        echo '<b>';
-                                                                        _e( 'Description: ', 'dp' );
-                                                                        echo '</b>';
-                                                                        echo $details['desc'];
-                                                                        ?>
-                                                                    </p>
-                                                                <?php } ?>
+                                                            <?php if( isset( $details['default'] ) ) { ?>
+                                                                <p>
+                                                                    <?php
+                                                                    echo '<b>';
+                                                                    _e( 'Default: ', 'dp' );
+                                                                    echo '</b>';
+                                                                    echo $details['default'];
+                                                                    ?>
+                                                                </p>
+                                                            <?php } ?>
 
-                                                            </li>
-                                                        <?php } ?>
-                                                    </ul>
-                                                </div>
-                                            </li>
-                                        <?php } ?>
-                                    </ul>
-                                </div>
+                                                            <?php if( isset( $details['desc'] ) ) { ?>
+                                                                <p>
+                                                                    <?php
+                                                                    echo '<b>';
+                                                                    _e( 'Description: ', 'dp' );
+                                                                    echo '</b>';
+                                                                    echo $details['desc'];
+                                                                    ?>
+                                                                </p>
+                                                            <?php } ?>
+
+                                                        </li>
+                                                    <?php } ?>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    <?php } ?>
+                                </ul>
                             </div>
                         </div>
                     </div>
+                </div>
                 <?php } ?>
             </div>
-        <?php
+            <?php
         }
 
     }
