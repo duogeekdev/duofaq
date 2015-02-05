@@ -231,7 +231,7 @@ if( ! class_exists( 'DuoFAQ' ) ) {
 
     }
 
-    new DuoFAQ();
+    //new DuoFAQ();
 
     require DF_FILES_DIR . '/classes/class.widget.php';
 
