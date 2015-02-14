@@ -283,7 +283,7 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
         public function register_duogeek_menu_page()
         {
             if( empty( $GLOBALS['admin_page_hooks']['duogeek-panel'] ) ) {
-                add_menu_page(__('DuoGeek Panel', 'dp'), __('DuoGeek Panel', 'dp'), 'manage_options', DUO_PANEL_SLUG, array($this, 'duogeek_panel_cb'), '', $this->menuPos);
+                add_menu_page(__('DuoGeek', 'dp'), __('DuoGeek', 'dp'), 'manage_options', DUO_PANEL_SLUG, array($this, 'duogeek_panel_cb'), '', $this->menuPos);
             }
         }
 

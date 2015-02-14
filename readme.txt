@@ -97,6 +97,10 @@ So, if you still don't have FAQ section on your site yet, install duoFAQ now and
 
 
 == Changelog ==
+= 1.3 =
+* "on" removed when category title is hidden in shortcode
+* Option added
+
 = 1.2 =
 * Style issue fixed
 
