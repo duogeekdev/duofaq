@@ -77,3 +77,11 @@ body{
 .product_title_holder{
     text-align: center;
 }
+
+.optgroup-header{
+    font-weight: bold;
+}
+
+.selectize-control{
+    width: 300px;
+}

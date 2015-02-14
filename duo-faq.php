@@ -70,6 +70,8 @@ if( ! class_exists( 'DuoFAQ' ) ) {
             add_action( 'init', array( $this, 'register_faq_post_type' ) );
             add_action( 'init', array( $this, 'register_faq_taxonomies' ) );
 
+            add_filter( 'duogeek_panel_pages', array( $this, 'duogeek_panel_pages_faq' ) );
+
             //add_action( 'admin_menu', array ($this, 'duofaq_menu' ) );
 
             //Adding styles and scripts
@@ -93,6 +95,11 @@ if( ! class_exists( 'DuoFAQ' ) ) {
 		 */
         public function register_faq_post_type() {
             $this->register_custom_post_type();
+        }
+
+        public function duogeek_panel_pages_faq( $arr ){
+            $arr[] = 'duofaq-settings';
+            return $arr;
         }
 
         /*
@@ -137,7 +144,12 @@ if( ! class_exists( 'DuoFAQ' ) ) {
                     'dep' => array( 'jquery', 'jquery-ui-core', 'jquery-ui-accordion' ),
                     'version' => DUO_VERSION,
                     'footer' => true,
-                    'condition' => true
+                    'condition' => true,
+                    'localize' => true,
+                    'localize_data' => array(
+                        'object' => 'faq_obj',
+                        'passed_data' => array( 'collapse' => isset( $df_options['collapse'] ) ? $df_options['collapse'] : 0 )
+                    )
                 )
             );
 
@@ -235,7 +247,7 @@ if( ! class_exists( 'DuoFAQ' ) ) {
                 'title' => __( 'FAQ Settings', 'df' ),
                 'menu_title' => __( 'FAQ Settings', 'df' ),
                 'capability' => 'manage_options',
-                'slug' => 'duofaq-settings.php',
+                'slug' => 'duofaq-settings',
                 'object' => $this,
                 'function' => 'duofaq_settings_page'
             );
@@ -253,14 +265,14 @@ if( ! class_exists( 'DuoFAQ' ) ) {
 
                 update_option( 'df_options', $_POST['df'] );
 
-                wp_redirect( admin_url( 'admin.php?page=duofaq-settings.php&msg=Settings+saved+successfully.' ) );
+                wp_redirect( admin_url( 'admin.php?page=duofaq-settings&msg=Settings+saved+successfully.' ) );
             }
 
             $df_options = get_option( 'df_options' );
 
             ?>
-            <form action="<?php echo admin_url( 'admin.php?page=duofaq-settings.php&noheader=true' ) ?>" method="post">
-                <div class="wrap">
+            <form action="<?php echo admin_url( 'admin.php?page=duofaq-settings&noheader=true' ) ?>" method="post">
+                <div class="wrap duo_prod_panel">
                     <h2><?php _e( 'DuoFAQ Settings' ) ?></h2>
 
                     <?php if( isset( $_REQUEST['msg'] ) ) { ?>
@@ -289,6 +301,17 @@ if( ! class_exists( 'DuoFAQ' ) ) {
                                                     <?php } ?>
                                                 </optgroup>
                                             </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th><?php _e( 'Collapse all by default', 'df' ) ?></th>
+                                        <td>
+                                            <label>
+                                                <input <?php echo ( isset( $df_options['collapse'] ) && $df_options['collapse'] == 0 ) || ! isset( $df_options['collapse'] ) ? 'checked' : ''; ?> type="radio" name="df[collapse]" value="0"> No
+                                            </label>
+                                            <label>
+                                                <input <?php echo isset( $df_options['collapse'] ) && $df_options['collapse'] == 1 ? 'checked' : ''; ?> type="radio" name="df[collapse]" value="1"> Yes
+                                            </label>
                                         </td>
                                     </tr>
                                     <tr>
