@@ -85,3 +85,12 @@ body{
 .selectize-control{
     width: 300px;
 }
+
+.duo-promo{
+    background: #fff;
+    padding: 20px;
+}
+
+.duo-promo h1{
+    margin-top: 0;
+}
