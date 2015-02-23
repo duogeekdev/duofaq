@@ -75,13 +75,10 @@ if( ! class_exists( 'DuoFAQ' ) ) {
 
             add_filter( 'duogeek_panel_pages', array( $this, 'duogeek_panel_pages_faq' ) );
 
-            //add_action( 'admin_menu', array ($this, 'duofaq_menu' ) );
-
             //Adding styles and scripts
             add_filter( 'front_scripts_styles', array( $this, 'user_faq_styles' ) );
             add_filter( 'admin_scripts_styles', array( $this, 'admin_faq_styles' ) );
             add_action( 'wp_footer', array( $this, 'df_custom_css' ) );
-
             add_filter( 'duogeek_submenu_pages', array( $this, 'duofaq_menu' ) );
 
             //Adding custom columns in taxonomy
@@ -91,8 +88,24 @@ if( ! class_exists( 'DuoFAQ' ) ) {
 
             add_shortcode( 'duo_faq', array($this, 'faq_shortcode') );
             add_filter( 'duo_panel_help', array( $this, 'duo_panel_help_cb' ) );
+            register_activation_hook( __FILE__, array( $this, 'faq_plugin_activate' ) );
+            add_action( 'admin_init', array( $this, 'faq_plugin_redirect' ) );
 
         }
+
+
+        public function faq_plugin_activate() {
+            update_option( 'faq_plugin_do_activation_redirect', true );
+        }
+
+
+        public function faq_plugin_redirect() {
+            if ( get_option( 'faq_plugin_do_activation_redirect', false ) ) {
+                delete_option( 'faq_plugin_do_activation_redirect' );
+                wp_redirect( admin_url( 'admin.php?page=duofaq-settings' ) );
+            }
+        }
+
 
         public function plugin_init() {
             $upload_dir = wp_upload_dir();
@@ -180,7 +193,7 @@ if( ! class_exists( 'DuoFAQ' ) ) {
             if( file_exists( $this->pro_themes_dir . '/' . strtolower( $df_options['theme'] ) . '.css' ) ){
                 $theme_style = array(
                     'name' => 'ui_accordion_css',
-                    'src' => $this->pro_themes_url . '/' . $df_options['theme'] . '.css',
+                    'src' => $this->pro_themes_url . '/' . strtolower( $df_options['theme'] ) . '.css',
                     'dep' => '',
                     'version' => DUO_VERSION,
                     'media' => 'all',
