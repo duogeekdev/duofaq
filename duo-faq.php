@@ -90,6 +90,8 @@ if( ! class_exists( 'DuoFAQ' ) ) {
             add_filter( 'duo_panel_help', array( $this, 'duo_panel_help_cb' ) );
             register_activation_hook( __FILE__, array( $this, 'faq_plugin_activate' ) );
             add_action( 'admin_init', array( $this, 'faq_plugin_redirect' ) );
+            add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'faq_action_links' ) );
+            add_action( 'admin_head', array( $this, 'faq_banner_plugin' ) );
 
         }
 
@@ -104,6 +106,14 @@ if( ! class_exists( 'DuoFAQ' ) ) {
                 delete_option( 'faq_plugin_do_activation_redirect' );
                 wp_redirect( admin_url( 'admin.php?page=duofaq-settings' ) );
             }
+        }
+
+
+        public function faq_action_links( $links ){
+            $mylinks = array(
+                '<a href="' . admin_url( 'admin.php?page=duofaq-settings' ) . '">FAQ Settings</a>',
+            );
+            return array_merge( $links, $mylinks );
         }
 
 
@@ -265,6 +275,7 @@ if( ! class_exists( 'DuoFAQ' ) ) {
             ?>
             <style>
                 .faq_wrap_all h3{font-size: <?php echo $df_options['qfont'] ?>px !important; }
+                .faq_wrap_all h4{font-size: <?php echo $df_options['cfont'] ?>px !important; }
                 <?php echo stripslashes( $df_options['custom_css'] ) ?>
             </style>
         <?php
@@ -418,12 +429,13 @@ if( ! class_exists( 'DuoFAQ' ) ) {
                                     <tr>
                                         <th><?php _e( 'Font size of question?', 'df' ) ?></th>
                                         <td>
-                                            <select name="df[qfont]">
-                                                <option value=""><?php _e( 'Select a size', 'df' ) ?></option>
-                                                <?php for( $i = 9; $i <= 20; $i++ ) { ?>
-                                                    <option <?php echo isset( $df_options['qfont'] ) && $df_options['qfont'] == $i ? 'selected' : ''; ?> value="<?php echo $i; ?>"><?php echo $i; ?> px</option>
-                                                <?php } ?>
-                                            </select>
+                                            <input type="text" name="df[qfont]" class="wide small_box" value="<?php echo isset( $df_options['qfont'] )  ? $df_options['qfont'] : 14; ?>"> px
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th><?php _e( 'Font size of category label?', 'df' ) ?></th>
+                                        <td>
+                                            <input type="text" name="df[cfont]" class="wide small_box" value="<?php echo isset( $df_options['cfont'] )  ? $df_options['cfont'] : 14; ?>"> px
                                         </td>
                                     </tr>
                                     <tr>
@@ -487,6 +499,24 @@ if( ! class_exists( 'DuoFAQ' ) ) {
             );
 
             return $arr;
+        }
+
+
+        public function faq_banner_plugin() {
+            ?>
+            <script type="text/javascript">
+                jQuery(function($){
+                    if($('#duofaq-responsive-flat-simple-faq').length){
+                        var html = '<tr>';
+                            html += '<td colspan="3" style="padding: 0">';
+                            html += '<a href="https://duogeek.com" target="_blnak"><img style="width: 100%; height: 200px;" src="//placehold.it/500&text=Get+more+FAQ+themes"></a>';
+                            html += '</td>';
+                            html += '</tr>';
+                        $('#duofaq-responsive-flat-simple-faq').after(html);
+                    }
+                });
+            </script>
+            <?php
         }
 
     }

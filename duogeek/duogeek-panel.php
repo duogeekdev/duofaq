@@ -55,14 +55,6 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
 
             $styles = array(
                 array(
-                    'name' => 'sn-bootstrap-css',
-                    'src' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css',
-                    'dep' => '',
-                    'version' => DUO_VERSION,
-                    'media' => 'all',
-                    'condition' => isset( $_REQUEST['page'] ) && in_array( $_REQUEST['page'], $this->admin_pages )
-                ),
-                array(
                     'name' => 'icheck-all',
                     'src' => DUO_PLUGIN_URI . 'duogeek/inc/icheck/skins/square/_all.css',
                     'dep' => '',
@@ -102,8 +94,8 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
 
             $scripts = array(
                 array(
-                    'name' => 'sn-bootstrap-js',
-                    'src' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js',
+                    'name' => 'icheck',
+                    'src' => DUO_PLUGIN_URI . 'duogeek/inc/icheck/icheck.min.js',
                     'dep' => array( 'jquery' ),
                     'version' => DUO_VERSION,
                     'footer' => true,
@@ -113,14 +105,6 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
                         'object' => 'obj_name',
                         'passed_data' => array( '100' )
                     )*/
-                ),
-                array(
-                    'name' => 'icheck',
-                    'src' => DUO_PLUGIN_URI . 'duogeek/inc/icheck/icheck.min.js',
-                    'dep' => array( 'jquery' ),
-                    'version' => DUO_VERSION,
-                    'footer' => true,
-                    'condition' => isset( $_REQUEST['page'] ) && in_array( $_REQUEST['page'], $this->admin_pages )
                 ),
                 array(
                     'name' => 'select-js',
@@ -193,14 +177,6 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
 
             $styles = array(
                 array(
-                    'name' => 'sn-bootstrap-css',
-                    'src' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css',
-                    'dep' => '',
-                    'version' => DUO_VERSION,
-                    'media' => 'all',
-                    'condition' => $this->DuoOptions['bootstrap'] != 1
-                ),
-                array(
                     'name' => 'sn-fontAwesome-css',
                     'src' => '//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css',
                     'dep' => '',
@@ -218,21 +194,7 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
                 )
             );
 
-            $scripts = array(
-                array(
-                    'name' => 'sn-bootstrap-js',
-                    'src' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js',
-                    'dep' => array( 'jquery' ),
-                    'version' => DUO_VERSION,
-                    'footer' => true,
-                    'condition' => $this->DuoOptions['bootstrap'] != 1
-                    /*'localize' => true,
-                    'localize_data' => array(
-                        'object' => 'obj_name',
-                        'passed_data' => array( '100' )
-                    )*/
-                )
-            );
+            $scripts = array();
 
             $this->front_enq = apply_filters( 'front_scripts_styles', array() );
 

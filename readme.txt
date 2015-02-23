@@ -103,8 +103,10 @@ For any issues, problem or query, please feel free to <a href="https://duogeek.c
 == Changelog ==
 = 1.3.4 =
 * Fixed: Style issue
+* Fixed: Title was not hiding in category shortcode view
 * Added: Control font size of question
-
+* Added: Control font size of FAQ Category label
+* Added: Faq theme uploader
 
 = 1.3.3 =
 * Minor fixes
