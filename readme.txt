@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: faq, faqs, frequently asked questions, wordpress faq, faq wordpress, faq for wordpress, faq plugin
 Requires at least: 3.5
 Tested up to: 4.1
-Stable tag: 1.3.3
+Stable tag: 1.3.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,6 +29,10 @@ In duoFAQ, you can use all native styles of jQuery Accordion. And moreover, we h
 
 
 So, if you still don't have FAQ section on your site yet, install duoFAQ now and serve 50% of your customers without even talking to them.
+
+For detailed instruction and video tutorial, please visit the <a href="https://duogeek.com/products/plugins/duofaq-responsive-flat-simple-faq/">plugin page</a>.
+
+For any issues, problem or query, please feel free to <a href="https://duogeek.com/contact/">contact us</a>.
 
 
 
@@ -97,6 +101,11 @@ So, if you still don't have FAQ section on your site yet, install duoFAQ now and
 
 
 == Changelog ==
+= 1.3.4 =
+* Fixed: Style issue
+* Added: Control font size of question
+
+
 = 1.3.3 =
 * Minor fixes
 

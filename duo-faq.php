@@ -3,7 +3,7 @@
 Plugin Name: duoFAQ - Responsive, Flat, Simple FAQ
 Plugin URI: http://duogeek.com
 Description: A responsive and lightweight FAQ (Frequently Asked Questions) plugin by duogeek
-Version: 1.3.3
+Version: 1.3.4
 Author: duogeek
 Author URI: http://duogeek.com
 License: GPL v2 or later
@@ -42,6 +42,8 @@ if( ! class_exists( 'DuoFAQ' ) ) {
     class DuoFAQ extends customPostType{
 
         private $post_type = array();
+        private $pro_themes_dir, $pro_themes_url;
+        private $pro_themes = array();
 
         public function __construct() {
 
@@ -69,6 +71,7 @@ if( ! class_exists( 'DuoFAQ' ) ) {
 
             add_action( 'init', array( $this, 'register_faq_post_type' ) );
             add_action( 'init', array( $this, 'register_faq_taxonomies' ) );
+            add_action( 'init', array( $this, 'plugin_init' ) );
 
             add_filter( 'duogeek_panel_pages', array( $this, 'duogeek_panel_pages_faq' ) );
 
@@ -76,6 +79,7 @@ if( ! class_exists( 'DuoFAQ' ) ) {
 
             //Adding styles and scripts
             add_filter( 'front_scripts_styles', array( $this, 'user_faq_styles' ) );
+            add_filter( 'admin_scripts_styles', array( $this, 'admin_faq_styles' ) );
             add_action( 'wp_footer', array( $this, 'df_custom_css' ) );
 
             add_filter( 'duogeek_submenu_pages', array( $this, 'duofaq_menu' ) );
@@ -88,6 +92,25 @@ if( ! class_exists( 'DuoFAQ' ) ) {
             add_shortcode( 'duo_faq', array($this, 'faq_shortcode') );
             add_filter( 'duo_panel_help', array( $this, 'duo_panel_help_cb' ) );
 
+        }
+
+        public function plugin_init() {
+            $upload_dir = wp_upload_dir();
+            $this->pro_themes_dir = apply_filters( 'faq_pro_themes_dir',  $upload_dir['basedir'] . '/faq_pro_themes' );
+            $this->pro_themes_url = apply_filters( 'faq_pro_themes_url',  $upload_dir['baseurl'] . '/faq_pro_themes' );
+
+            if( is_dir( $this->pro_themes_dir . '/' ) ) {
+                if ($handle = opendir($this->pro_themes_dir . '/')) {
+                    while (false !== ($entry = readdir($handle))) {
+                        if ($entry != "." && $entry != ".." && pathinfo($entry, PATHINFO_EXTENSION) == 'css') {
+
+                            array_push($this->pro_themes, ucfirst( basename( $entry, ".css" ) ) );
+                        }
+                    }
+                    closedir($handle);
+                }
+            }
+            $this->pro_themes = apply_filters( 'faq_pro_themes_list', $this->pro_themes );
         }
 
         /*
@@ -154,8 +177,17 @@ if( ! class_exists( 'DuoFAQ' ) ) {
             );
 
             $df_options['theme'] = isset( $df_options['theme'] ) && $df_options['theme'] != '' ? $df_options['theme'] : 'orange';
-
-            if( in_array( $df_options['theme'], $jquery_themes ) ){
+            if( file_exists( $this->pro_themes_dir . '/' . strtolower( $df_options['theme'] ) . '.css' ) ){
+                $theme_style = array(
+                    'name' => 'ui_accordion_css',
+                    'src' => $this->pro_themes_url . '/' . $df_options['theme'] . '.css',
+                    'dep' => '',
+                    'version' => DUO_VERSION,
+                    'media' => 'all',
+                    'condition' => true
+                );
+            }
+            elseif( in_array( $df_options['theme'], $jquery_themes ) ){
                 $theme_style = array(
                     'name' => 'ui_accordion_css',
                     'src' => '//code.jquery.com/ui/1.11.2/themes/' . strtolower( str_replace( ' ', '-', $df_options['theme'] ) ) . '/jquery-ui.css',
@@ -195,11 +227,31 @@ if( ! class_exists( 'DuoFAQ' ) ) {
             return $enq;
         }
 
+        public function admin_faq_styles( $enq ) {
+            $styles = array(
+                array(
+                    'name' => 'faq_admin_css',
+                    'src' => DF_FILES_URI .'/inc/css/faq-admin.css',
+                    'dep' => '',
+                    'version' => DUO_VERSION,
+                    'media' => 'all',
+                    'condition' => true
+                )
+            );
+
+            if( ! isset( $enq['scripts'] ) || ! is_array( $enq['scripts'] ) ) $enq['scripts'] = array();
+            if( ! isset( $enq['styles'] ) || ! is_array( $enq['styles'] ) ) $enq['styles'] = array();
+            $enq['styles'] = array_merge( $enq['styles'], $styles );
+
+            return $enq;
+        }
+
 
         public function df_custom_css() {
             $df_options = get_option( 'df_options' );
             ?>
             <style>
+                .faq_wrap_all h3{font-size: <?php echo $df_options['qfont'] ?>px !important; }
                 <?php echo stripslashes( $df_options['custom_css'] ) ?>
             </style>
         <?php
@@ -268,6 +320,33 @@ if( ! class_exists( 'DuoFAQ' ) ) {
                 wp_redirect( admin_url( 'admin.php?page=duofaq-settings&msg=Settings+saved+successfully.' ) );
             }
 
+            if( isset( $_POST['upload_theme'] ) ){
+
+                if( ! isset( $_FILES['faq_pro_theme'] ) || $_FILES['faq_pro_theme']['name'] == '' ){
+                    wp_redirect(admin_url('admin.php?page=duofaq-settings&msg=' . __('Please+select+a+file.', 'src')));
+                }else{
+                    if( ! is_dir( $this->pro_themes_dir ) ){
+                        mkdir( $this->pro_themes_dir );
+                    }
+
+                    $target_dir = $this->pro_themes_dir. '/';
+                    $target_file = $target_dir . basename($_FILES["faq_pro_theme"]["name"]);
+
+                    if (move_uploaded_file($_FILES["faq_pro_theme"]["tmp_name"], $target_file)) {
+                        $zip = new ZipArchive;
+                        $zip->open( $target_file );
+                        $zip->extractTo( $target_dir );
+                        $zip->close();
+                        unlink( $target_file );
+                        wp_redirect(admin_url('admin.php?page=duofaq-settings&msg=' . __('The+template+is+uploaded.', 'src')));
+                    } else {
+                        wp_redirect(admin_url('admin.php?page=duofaq-settings&msg=' . __('There+is+an+issue+with+the+upload+process.+Please+contact+support.', 'src')));
+                    }
+
+                }
+
+            }
+
             $df_options = get_option( 'df_options' );
 
             ?>
@@ -290,6 +369,15 @@ if( ! class_exists( 'DuoFAQ' ) ) {
                                         <td>
                                             <select name="df[theme]">
                                                 <option value=""><?php _e( 'Select a theme', 'df' ) ?></option>
+
+                                                <?php if( count( $this->pro_themes ) > 0 ) { ?>
+                                                    <optgroup label="Premium Themes">
+                                                        <?php foreach( $this->pro_themes as $theme ){ ?>
+                                                            <option <?php echo isset( $df_options['theme'] ) && $df_options['theme'] == $theme ? 'selected' : ''; ?> value="<?php echo $theme ?>"><?php echo $theme ?></option>
+                                                        <?php } ?>
+                                                    </optgroup>
+                                                <?php } ?>
+
                                                 <optgroup label="jQuery UI Themes">
                                                     <?php foreach( $jquery_themes as $theme ){ ?>
                                                         <option <?php echo isset( $df_options['theme'] ) && $df_options['theme'] == $theme ? 'selected' : ''; ?> value="<?php echo $theme ?>"><?php echo $theme ?></option>
@@ -315,6 +403,17 @@ if( ! class_exists( 'DuoFAQ' ) ) {
                                         </td>
                                     </tr>
                                     <tr>
+                                        <th><?php _e( 'Font size of question?', 'df' ) ?></th>
+                                        <td>
+                                            <select name="df[qfont]">
+                                                <option value=""><?php _e( 'Select a size', 'df' ) ?></option>
+                                                <?php for( $i = 9; $i <= 20; $i++ ) { ?>
+                                                    <option <?php echo isset( $df_options['qfont'] ) && $df_options['qfont'] == $i ? 'selected' : ''; ?> value="<?php echo $i; ?>"><?php echo $i; ?> px</option>
+                                                <?php } ?>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <th><?php _e( 'Custom CSS:', 'df' ) ?></th>
                                         <td>
                                             <textarea name="df[custom_css]" rows="10" cols="90"><?php echo isset( $df_options['custom_css'] ) && $df_options['custom_css'] != '' ? stripslashes( $df_options['custom_css'] ) : ''; ?></textarea>
@@ -333,6 +432,30 @@ if( ! class_exists( 'DuoFAQ' ) ) {
 
                 </div>
             </form>
+
+            <div class="wrap duo_prod_panel">
+                <div id="poststuff">
+                    <div class="postbox">
+                        <h3 class="hndle"><span><?php _e( 'Upload New Theme', 'src' ) ?></span></h3>
+                        <div class="inside">
+                            <form action="<?php echo admin_url( 'admin.php?page=duofaq-settings&noheader=true' ) ?>" method="post" enctype="multipart/form-data">
+                                <table class="form-table">
+                                    <tr>
+                                        <th valign="top"><?php _e( 'Upload zip file of new theme', 'src' ) ?></th>
+                                        <td valign="top">
+                                            <input type="file" name="faq_pro_theme">
+                                        </td>
+                                    </tr>
+                                </table>
+                                <p>
+                                    <input name="upload_theme" type="submit" class="button button-primary" value="<?php _e( 'Upload', 'src' ) ?>">
+                                </p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         <?php
         }
 
