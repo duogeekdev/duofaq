@@ -71,7 +71,10 @@
 }
 
 .ui-accordion-content-active {
-    padding: 10px;
     border: 1px solid #2ebb98;
     margin-top: -1px;
+}
+
+.smartItemsDetails p{
+    margin: 10px !important;
 }
