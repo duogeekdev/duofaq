@@ -177,14 +177,6 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
 
             $styles = array(
                 array(
-                    'name' => 'sn-fontAwesome-css',
-                    'src' => '//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css',
-                    'dep' => '',
-                    'version' => DUO_VERSION,
-                    'media' => 'all',
-                    'condition' => $this->DuoOptions['fontAwesome'] != 1
-                ),
-                array(
                     'name' => 'sn-animate-css',
                     'src' => DUO_PLUGIN_URI . 'duogeek/inc/animate.css',
                     'dep' => '',
@@ -266,7 +258,6 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
                     }
                 }
 
-                $duo_post['bootstrap'] = isset( $duo_post['bootstrap'] ) ? $duo_post['bootstrap'] : 0;
                 $duo_post['fontAwesome'] = isset( $duo_post['fontAwesome'] ) ? $duo_post['fontAwesome'] : 0;
                 $duo_post['animate'] = isset( $duo_post['animate'] ) ? $duo_post['animate'] : 0;
                 $duo_post['cookie'] = isset( $duo_post['cookie'] ) ? $duo_post['cookie'] : 24;
@@ -295,10 +286,6 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
                             <h3 class="hndle"><?php _e( 'General Settings', 'dp' ) ?></h3>
                             <div class="inside">
                                 <table class="form-table">
-                                    <tr>
-                                        <th><?php _e( 'Disable Bootstrap', 'dp' ) ?></th>
-                                        <td><input <?php echo isset( $duo['bootstrap'] ) && $duo['bootstrap'] == 1 ? 'checked="checked"' : '' ?> type="checkbox" name="duo[bootstrap]" value="1" /> <span class="description"><?php _e( 'Check if your theme already provides it', 'dp' ) ?></span></td>
-                                    </tr>
                                     <tr>
                                         <th><?php _e( 'Disable FontAwesome', 'dp' ) ?></th>
                                         <td><input <?php echo isset( $duo['fontAwesome'] ) && $duo['fontAwesome'] == 1 ? 'checked="checked"' : '' ?> type="checkbox" name="duo[fontAwesome]" value="1" /> <span class="description"><?php _e( 'Check if your theme already provides it', 'dp' ) ?></span></td>
