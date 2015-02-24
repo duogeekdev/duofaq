@@ -177,6 +177,14 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
 
             $styles = array(
                 array(
+                    'name' => 'sn-fontAwesome-css',
+                    'src' => '//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css',
+                    'dep' => '',
+                    'version' => DUO_VERSION,
+                    'media' => 'all',
+                    'condition' => $this->DuoOptions['fontAwesome'] != 1
+                ),
+                array(
                     'name' => 'sn-animate-css',
                     'src' => DUO_PLUGIN_URI . 'duogeek/inc/animate.css',
                     'dep' => '',

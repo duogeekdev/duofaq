@@ -377,7 +377,7 @@ if( ! class_exists( 'DuoFAQ' ) ) {
             <form action="<?php echo admin_url( 'admin.php?page=duofaq-settings&noheader=true' ) ?>" method="post">
                 <div class="wrap duo_prod_panel">
                     <h2><?php _e( 'DuoFAQ Settings' ) ?></h2>
-
+                    <a href="https://duogeek.com/duofaq-add-ons/" target="_blnak"><img style="width: 100%;" src="<?php echo DF_FILES_URI . '/inc/img/duofaq-plugin-settings-banner.png' ?>"></a>
                     <?php if( isset( $_REQUEST['msg'] ) ) { ?>
                         <div id="message" class="<?php echo isset( $_REQUEST['duoaction'] ) ? $_REQUEST['duoaction'] : 'updated' ?> below-h2"><p><?php echo str_replace( '+', ' ', $_REQUEST['msg'] ) ?></p></div>
                     <?php } ?>
@@ -509,7 +509,7 @@ if( ! class_exists( 'DuoFAQ' ) ) {
                     if($('#duofaq-responsive-flat-simple-faq').length){
                         var html = '<tr>';
                             html += '<td colspan="3" style="padding: 0">';
-                            html += '<a href="https://duogeek.com" target="_blnak"><img style="width: 100%; height: 200px;" src="//placehold.it/500&text=Get+more+FAQ+themes"></a>';
+                            html += '<a href="https://duogeek.com/duofaq-add-ons/" target="_blnak"><img style="width: 100%;" src="<?php echo DF_FILES_URI . '/inc/img/duofaq-plugin-list-banner.png' ?>"></a>';
                             html += '</td>';
                             html += '</tr>';
                         $('#duofaq-responsive-flat-simple-faq').after(html);
