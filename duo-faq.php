@@ -23,6 +23,7 @@ if( ! defined( 'DF_FILES_URI' ) ) define( 'DF_FILES_URI', DF_PLUGIN_URI . '/duof
 if( ! defined( 'DF_CLASSES_DIR' ) ) define( 'DF_CLASSES_DIR', DF_FILES_DIR . '/classes' );
 if( ! defined( 'DF_ADDONS_DIR' ) ) define( 'DF_ADDONS_DIR', DF_FILES_DIR . '/addons' );
 if( ! defined( 'DF_INCLUDES_DIR' ) ) define( 'DF_INCLUDES_DIR', DF_FILES_DIR . '/includes' );
+if( ! defined( 'DUO_SETTINGS_PAGE' ) ) define( 'DUO_SETTINGS_PAGE', 'admin.php?page=duofaq-settings' );
 
 if( ! defined( 'DUO_FAQ_MENU_POSITION' ) ) define( 'DUO_FAQ_MENU_POSITION', '37' );
 if( ! defined( 'FAQ_POST_TYPE_REWRITE_SLUG' ) ) define( 'FAQ_POST_TYPE_REWRITE_SLUG', 'faq' );
@@ -82,10 +83,18 @@ if( ! class_exists( 'DuoFAQ' ) ) {
             add_action( 'wp_footer', array( $this, 'df_custom_css' ) );
             add_filter( 'duogeek_submenu_pages', array( $this, 'duofaq_menu' ) );
 
+            add_action( 'add_meta_boxes', array($this, 'faq_meta_box' ) );
+            add_action( 'save_post_faq', array( $this, 'save_faq_meta' ) );
+
             //Adding custom columns in taxonomy
-            add_action( "manage_edit-faq_categories_columns",          array($this, 'posts_columns_id') );
+            add_action( "manage_edit-faq_categories_columns", array($this, 'posts_columns_id') );
             add_filter( "manage_edit-faq_categories_sortable_columns", array($this, 'posts_columns_id') );
-            add_filter( "manage_faq_categories_custom_column",         array($this, 'posts_custom_id_columns'), 10, 3 );
+            add_filter( "manage_faq_categories_custom_column", array($this, 'posts_custom_id_columns'), 10, 3 );
+            //Adding meta field in taxonomy
+            add_action( 'faq_categories_add_form_fields', array($this, 'faq_categories_add_new_meta_field') );
+            add_action( 'faq_categories_edit_form_fields', array($this, 'faq_categories_edit_meta_field') );
+            add_action( 'edited_faq_categories', array($this, 'save_faq_categories_custom_meta') );
+            add_action( 'create_faq_categories', array($this, 'save_faq_categories_custom_meta') );
 
             add_shortcode( 'duo_faq', array($this, 'faq_shortcode') );
             add_filter( 'duo_panel_help', array( $this, 'duo_panel_help_cb' ) );
@@ -144,6 +153,49 @@ if( ! class_exists( 'DuoFAQ' ) ) {
             $this->register_custom_post_type();
         }
 
+        /**
+         * Adding meta box for featured mark
+         */
+        public function faq_meta_box() {
+            add_meta_box( 'faq_order_no', __( 'Order No', 'sn' ), array( $this, 'faq_meta_box_cb' ), $this->post_type['post_type'], 'normal', 'high' );
+        }
+
+        /**
+         * Meta box callback
+         */
+        public function faq_meta_box_cb( $post ) {
+            wp_nonce_field( 'faq_meta_box', 'faq_meta_box_nonce' );
+            $value = get_post_meta( $post->ID, 'faq_order_no', true );
+            ?>
+            <input type="text" name="faq_order_no" id="faq_order_no" value="<?php echo isset( $value ) && $value != '' ? $value : '' ?>" />
+            <label for="faq_order_no">
+                <?php _e( 'Enter a value for this field', 'sn' ); ?>
+            </label>
+            <?php
+        }
+
+        /**
+         * Saving meta value
+         */
+        public function save_faq_meta( $post_id ) {
+            if ( !isset( $_POST['faq_meta_box_nonce'] ) ) {
+                return;
+            }
+
+            if ( !wp_verify_nonce( $_POST['faq_meta_box_nonce'], 'faq_meta_box' ) ) {
+                return;
+            }
+
+            if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+                return;
+            }
+
+            if ( !isset( $_POST['faq_order_no'] ) ) $faq_order_no = 0;
+            else $faq_order_no = sanitize_text_field( $_POST['faq_order_no'] );
+
+            update_post_meta( $post_id, 'faq_order_no', $faq_order_no );
+        }
+
         public function duogeek_panel_pages_faq( $arr ){
             $arr[] = 'duofaq-settings';
             return $arr;
@@ -175,6 +227,49 @@ if( ! class_exists( 'DuoFAQ' ) ) {
             foreach( $taxes as $tax ){
                 $this->set_tax( $tax );
                 $this->register_custom_taxonomies();
+            }
+        }
+
+        /**
+         * Adding meta box for custom category taxonomy
+         */
+        public function faq_categories_add_new_meta_field() {
+            ?>
+            <div class="form-field">
+                <label for="order_no"><?php _e( 'Category Order No', 'sn' ); ?></label>
+                <input type="text" name="order_no" id="order_no" value="">
+                <p class="description"><?php _e( 'Enter a value for this field','sn' ); ?></p>
+            </div>
+            <?php
+        }
+
+        /**
+         * Edit meta box for custom catgory taxonomy
+         */
+        public function faq_categories_edit_meta_field($term) {
+            $t_id = $term->term_id;
+            $order_no = get_option( "faq_categories_order_$t_id" );
+            ?>
+            <tr class="form-field">
+                <th scope="row" valign="top">
+                    <label for="order_no"><?php _e( 'Category Order No', 'sn' ); ?></label>
+                </th>
+                <td>
+                    <input type="text" name="order_no" id="order_no" value="<?php echo esc_attr( $order_no ) ? esc_attr( $order_no ) : ''; ?>">
+                    <p class="description"><?php _e( 'Enter a value for this field','sn' ); ?></p>
+                </td>
+            </tr>
+            <?php
+        }
+
+        /**
+         * Save meta for custom category taxonomy
+         */
+        public function save_faq_categories_custom_meta( $term_id ) {
+            if ( isset( $_POST['order_no'] ) ) {
+                $t_id = $term_id;
+                $term_meta = get_option( "faq_categories_order_$t_id" );
+                update_option( "faq_categories_order_$t_id", $_POST['order_no'] );
             }
         }
 
@@ -284,18 +379,35 @@ if( ! class_exists( 'DuoFAQ' ) ) {
 
 
         /*
-         *
          * Adding column in taxonomy
-         *
          */
         public function posts_columns_id($columns) {
-            return $columns + array ( 'tax_id' => 'ID' );
+            $columns['tax_id'] = 'ID';
+            $columns['order_no'] = 'Order No';
+            return $columns;
         }
 
         public function posts_custom_id_columns($v, $name, $id) {
-            return $id;
+            $order_no = get_option( "faq_categories_order_$id" );
+            switch( $name ) {
+                case 'tax_id':
+                    return $id;
+                    break;
+                case 'order_no':
+                    return $order_no;
+                    break;
+                default:
+                    break;
+            }
         }
 
+        public function cmp($a, $b){
+            return (int)$a->order_no - (int)$b->order_no;
+        }
+
+        public function cmp_post($a, $b){
+            return (int)$a->faq_order_no - (int)$b->faq_order_no;
+        }
 
         public function faq_shortcode( $atts ){
             extract( shortcode_atts( array(
@@ -313,17 +425,35 @@ if( ! class_exists( 'DuoFAQ' ) ) {
                     $cat = array();
                     foreach( $cats as $v ){
                         $term = get_term( $v, 'faq_categories' );
+                        $term->order_no = get_option( "faq_categories_order_$v" );
                         array_push( $cat, $term );
                     }
+                    usort($cat, array($this, 'cmp'));
                     include DF_FILES_DIR . '/templates/all_view.php';
                 }else{
-                    $cat = get_term( $category, 'faq_categories' );
+                    $cats = get_term( $category, 'faq_categories' );
+                    $cat = array();
+                    foreach( $cats as $value ){
+                        $id = $value->term_id;
+                        $value->order_no = get_option( "faq_categories_order_$id" );
+                        array_push( $cat, $value );
+                    }
+                    usort($cat, array($this, 'cmp'));
+                    //var_dump($cat);
                     include DF_FILES_DIR . '/templates/category_view.php';
                 }
             }
             else
             {
-                $cat = get_terms('faq_categories');
+                $cats = get_terms('faq_categories');
+                $cat = array();
+                foreach( $cats as $value ){
+                    $id = $value->term_id;
+                    $value->order_no = get_option( "faq_categories_order_$id" );
+                    array_push( $cat, $value );
+                }
+                usort($cat, array($this, 'cmp'));
+                //var_dump($cat);
                 include DF_FILES_DIR . '/templates/all_view.php';
             }
 
