@@ -3,7 +3,7 @@
 Plugin Name: duoFAQ - Responsive, Flat, Simple FAQ
 Plugin URI: http://duogeek.com
 Description: A responsive and lightweight FAQ (Frequently Asked Questions) plugin by duogeek
-Version: 1.3.9
+Version: 1.4.0
 Author: duogeek
 Author URI: http://duogeek.com
 License: GPL v2 or later
@@ -23,7 +23,7 @@ if( ! defined( 'DF_FILES_URI' ) ) define( 'DF_FILES_URI', DF_PLUGIN_URI . '/duof
 if( ! defined( 'DF_CLASSES_DIR' ) ) define( 'DF_CLASSES_DIR', DF_FILES_DIR . '/classes' );
 if( ! defined( 'DF_ADDONS_DIR' ) ) define( 'DF_ADDONS_DIR', DF_FILES_DIR . '/addons' );
 if( ! defined( 'DF_INCLUDES_DIR' ) ) define( 'DF_INCLUDES_DIR', DF_FILES_DIR . '/includes' );
-if( ! defined( 'DUO_SETTINGS_PAGE' ) ) define( 'DUO_SETTINGS_PAGE', 'admin.php?page=duofaq-settings' );
+
 
 if( ! defined( 'DUO_FAQ_MENU_POSITION' ) ) define( 'DUO_FAQ_MENU_POSITION', '37' );
 if( ! defined( 'FAQ_POST_TYPE_REWRITE_SLUG' ) ) define( 'FAQ_POST_TYPE_REWRITE_SLUG', 'faq' );
@@ -69,6 +69,17 @@ if( ! class_exists( 'DuoFAQ' ) ) {
                 'rewrite'			 => FAQ_POST_TYPE_REWRITE_SLUG
             );
 
+            $this->meta_boxes = array(
+                array(
+                    'id'            => 'faq_order_no',
+                    'title'         => 'Order No',
+                    'callback'      => array( $this, 'faq_meta_box_cb' ),
+                    'post_type'     => $this->post_type['post_type'],
+                    'context'       => 'side',
+                    'priority'      => 'high'
+                )
+            );
+
             parent::__construct( $this->post_type );
 
             add_action( 'init', array( $this, 'register_faq_post_type' ) );
@@ -83,7 +94,7 @@ if( ! class_exists( 'DuoFAQ' ) ) {
             add_action( 'wp_footer', array( $this, 'df_custom_css' ) );
             add_filter( 'duogeek_submenu_pages', array( $this, 'duofaq_menu' ) );
 
-            add_action( 'add_meta_boxes', array($this, 'faq_meta_box' ) );
+            add_action( 'add_meta_boxes', array($this, 'register_faq_meta_boxes' ) );
             add_action( 'save_post_faq', array( $this, 'save_faq_meta' ) );
 
             //Adding custom columns in taxonomy
@@ -156,8 +167,8 @@ if( ! class_exists( 'DuoFAQ' ) ) {
         /**
          * Adding meta box for featured mark
          */
-        public function faq_meta_box() {
-            add_meta_box( 'faq_order_no', __( 'Order No', 'sn' ), array( $this, 'faq_meta_box_cb' ), $this->post_type['post_type'], 'normal', 'high' );
+        public function register_faq_meta_boxes() {
+            $this->add_custom_meta_boxes( $this->meta_boxes );
         }
 
         /**
@@ -167,10 +178,10 @@ if( ! class_exists( 'DuoFAQ' ) ) {
             wp_nonce_field( 'faq_meta_box', 'faq_meta_box_nonce' );
             $value = get_post_meta( $post->ID, 'faq_order_no', true );
             ?>
-            <input type="text" name="faq_order_no" id="faq_order_no" value="<?php echo isset( $value ) && $value != '' ? $value : '' ?>" />
             <label for="faq_order_no">
-                <?php _e( 'Enter a value for this field', 'sn' ); ?>
+                <?php _e( 'Order No', 'sn' ); ?>
             </label>
+            <input type="text" name="faq_order_no" id="faq_order_no" value="<?php echo isset( $value ) && $value != '' ? $value : '' ?>" />
             <?php
         }
 
@@ -516,108 +527,109 @@ if( ! class_exists( 'DuoFAQ' ) ) {
             $df_options = get_option( 'df_options' );
 
             ?>
-            <form action="<?php echo admin_url( 'admin.php?page=duofaq-settings&noheader=true' ) ?>" method="post">
-                <div class="wrap duo_prod_panel">
-                    <h2><?php _e( 'DuoFAQ Settings' ) ?></h2>
-                    <a style="outline: none" href="//duogeek.com/products/add-ons/" target="_blnak"><img style="width: 100%;" src="<?php echo DF_FILES_URI . '/inc/img/duofaq-plugin-settings-banner.png' ?>"></a>
-                    <?php if( isset( $_REQUEST['msg'] ) ) { ?>
-                        <div id="message" class="<?php echo isset( $_REQUEST['duoaction'] ) ? $_REQUEST['duoaction'] : 'updated' ?> below-h2"><p><?php echo str_replace( '+', ' ', $_REQUEST['msg'] ) ?></p></div>
-                    <?php } ?>
-
-                    <?php wp_nonce_field('df_nonce_action','df_nonce_field'); ?>
-                    <div id="poststuff">
-                        <div class="postbox">
-                            <h3 class="hndle"><?php _e( 'General Settings', 'df' ) ?></h3>
-                            <div class="inside">
-                                <table class="form-table">
-                                    <tr>
-                                        <th><?php _e( 'Choose a theme:', 'df' ) ?></th>
-                                        <td>
-                                            <select name="df[theme]">
-                                                <option value=""><?php _e( 'Select a theme', 'df' ) ?></option>
-
-                                                <?php if( count( $this->pro_themes ) > 0 ) { ?>
-                                                    <optgroup label="Premium Themes">
-                                                        <?php foreach( $this->pro_themes as $theme ){ ?>
-                                                            <option <?php echo isset( $df_options['theme'] ) && $df_options['theme'] == $theme ? 'selected' : ''; ?> value="<?php echo $theme ?>"><?php echo $theme ?></option>
-                                                        <?php } ?>
-                                                    </optgroup>
-                                                <?php } ?>
-
-                                                <optgroup label="jQuery UI Themes">
-                                                    <?php foreach( $jquery_themes as $theme ){ ?>
-                                                        <option <?php echo isset( $df_options['theme'] ) && $df_options['theme'] == $theme ? 'selected' : ''; ?> value="<?php echo $theme ?>"><?php echo $theme ?></option>
-                                                    <?php } ?>
-                                                </optgroup>
-                                                <optgroup label="Custom Themes">
-                                                    <?php foreach( $custom_themes as $theme ){ ?>
-                                                        <option <?php echo isset( $df_options['theme'] ) && $df_options['theme'] == $theme ? 'selected' : ''; ?> value="<?php echo $theme ?>"><?php echo ucfirst( str_replace( '-', ' ', $theme ) ) ?></option>
-                                                    <?php } ?>
-                                                </optgroup>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th><?php _e( 'Collapse all by default', 'df' ) ?></th>
-                                        <td>
-                                            <label>
-                                                <input <?php echo ( isset( $df_options['collapse'] ) && $df_options['collapse'] == 0 ) || ! isset( $df_options['collapse'] ) ? 'checked' : ''; ?> type="radio" name="df[collapse]" value="0"> No
-                                            </label>
-                                            <label>
-                                                <input <?php echo isset( $df_options['collapse'] ) && $df_options['collapse'] == 1 ? 'checked' : ''; ?> type="radio" name="df[collapse]" value="1"> Yes
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th><?php _e( 'Font size of question?', 'df' ) ?></th>
-                                        <td>
-                                            <input type="text" name="df[qfont]" class="wide small_box" value="<?php echo isset( $df_options['qfont'] )  ? $df_options['qfont'] : 14; ?>"> px
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th><?php _e( 'Font size of category label?', 'df' ) ?></th>
-                                        <td>
-                                            <input type="text" name="df[cfont]" class="wide small_box" value="<?php echo isset( $df_options['cfont'] )  ? $df_options['cfont'] : 14; ?>"> px
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th><?php _e( 'Custom CSS:', 'df' ) ?></th>
-                                        <td>
-                                            <textarea name="df[custom_css]" rows="10" cols="90"><?php echo isset( $df_options['custom_css'] ) && $df_options['custom_css'] != '' ? stripslashes( $df_options['custom_css'] ) : ''; ?></textarea>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            <p><input type="submit" name="df_save" class="button button-primary" value="<?php _e( 'Save Settings', 'df' ) ?>" /></p>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-
-                </div>
-            </form>
 
             <div class="wrap duo_prod_panel">
+                <h2><?php _e( 'DuoFAQ Settings' ) ?></h2>
+                <a style="outline: none" href="//duogeek.com/products/add-ons/" target="_blnak"><img style="width: 100%;" src="<?php echo DF_FILES_URI . '/inc/img/duofaq-plugin-settings-banner.png' ?>"></a>
+                <?php if( isset( $_REQUEST['msg'] ) ) { ?>
+                    <div id="message" class="<?php echo isset( $_REQUEST['duoaction'] ) ? $_REQUEST['duoaction'] : 'updated' ?> below-h2"><p><?php echo str_replace( '+', ' ', $_REQUEST['msg'] ) ?></p></div>
+                <?php } ?>
+
                 <div id="poststuff">
-                    <div class="postbox">
-                        <h3 class="hndle"><span><?php _e( 'Upload New Theme', 'src' ) ?></span></h3>
-                        <div class="inside">
-                            <form action="<?php echo admin_url( 'admin.php?page=duofaq-settings&noheader=true' ) ?>" method="post" enctype="multipart/form-data">
-                                <table class="form-table">
-                                    <tr>
-                                        <th valign="top"><?php _e( 'Upload zip file of new theme', 'src' ) ?></th>
-                                        <td valign="top">
-                                            <input type="file" name="faq_pro_theme">
-                                        </td>
-                                    </tr>
-                                </table>
-                                <p>
-                                    <input name="upload_theme" type="submit" class="button button-primary" value="<?php _e( 'Upload', 'src' ) ?>">
-                                </p>
-                            </form>
+                    <div id="post-body" class="metabox-holder columns-2">
+                        <div id="post-body-content">
+                            <div class="postbox">
+                                <h3 class="hndle"><?php _e( 'General Settings', 'df' ) ?></h3>
+                                <div class="inside">
+                                    <form action="<?php echo admin_url( 'admin.php?page=duofaq-settings&noheader=true' ) ?>" method="post">
+                                        <?php wp_nonce_field('df_nonce_action','df_nonce_field'); ?>
+                                        <table class="form-table">
+                                            <tr>
+                                                <th><?php _e( 'Choose a theme:', 'df' ) ?></th>
+                                                <td>
+                                                    <select name="df[theme]">
+                                                        <option value=""><?php _e( 'Select a theme', 'df' ) ?></option>
+
+                                                        <?php if( count( $this->pro_themes ) > 0 ) { ?>
+                                                            <optgroup label="Premium Themes">
+                                                                <?php foreach( $this->pro_themes as $theme ){ ?>
+                                                                    <option <?php echo isset( $df_options['theme'] ) && $df_options['theme'] == $theme ? 'selected' : ''; ?> value="<?php echo $theme ?>"><?php echo $theme ?></option>
+                                                                <?php } ?>
+                                                            </optgroup>
+                                                        <?php } ?>
+
+                                                        <optgroup label="jQuery UI Themes">
+                                                            <?php foreach( $jquery_themes as $theme ){ ?>
+                                                                <option <?php echo isset( $df_options['theme'] ) && $df_options['theme'] == $theme ? 'selected' : ''; ?> value="<?php echo $theme ?>"><?php echo $theme ?></option>
+                                                            <?php } ?>
+                                                        </optgroup>
+                                                        <optgroup label="Custom Themes">
+                                                            <?php foreach( $custom_themes as $theme ){ ?>
+                                                                <option <?php echo isset( $df_options['theme'] ) && $df_options['theme'] == $theme ? 'selected' : ''; ?> value="<?php echo $theme ?>"><?php echo ucfirst( str_replace( '-', ' ', $theme ) ) ?></option>
+                                                            <?php } ?>
+                                                        </optgroup>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php _e( 'Collapse all by default', 'df' ) ?></th>
+                                                <td>
+                                                    <label>
+                                                        <input <?php echo ( isset( $df_options['collapse'] ) && $df_options['collapse'] == 0 ) || ! isset( $df_options['collapse'] ) ? 'checked' : ''; ?> type="radio" name="df[collapse]" value="0"> No
+                                                    </label>
+                                                    <label>
+                                                        <input <?php echo isset( $df_options['collapse'] ) && $df_options['collapse'] == 1 ? 'checked' : ''; ?> type="radio" name="df[collapse]" value="1"> Yes
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php _e( 'Font size of question?', 'df' ) ?></th>
+                                                <td>
+                                                    <input type="text" name="df[qfont]" class="wide small_box" value="<?php echo isset( $df_options['qfont'] )  ? $df_options['qfont'] : 14; ?>"> px
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php _e( 'Font size of category label?', 'df' ) ?></th>
+                                                <td>
+                                                    <input type="text" name="df[cfont]" class="wide small_box" value="<?php echo isset( $df_options['cfont'] )  ? $df_options['cfont'] : 14; ?>"> px
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php _e( 'Custom CSS:', 'df' ) ?></th>
+                                                <td>
+                                                    <textarea name="df[custom_css]" rows="10" cols="70"><?php echo isset( $df_options['custom_css'] ) && $df_options['custom_css'] != '' ? stripslashes( $df_options['custom_css'] ) : ''; ?></textarea>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <p><input type="submit" name="df_save" class="button button-primary" value="<?php _e( 'Save Settings', 'df' ) ?>" /></p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="postbox">
+                                <h3 class="hndle"><span><?php _e( 'Upload New Theme', 'src' ) ?></span></h3>
+                                <div class="inside">
+                                    <form action="<?php echo admin_url( 'admin.php?page=duofaq-settings&noheader=true' ) ?>" method="post" enctype="multipart/form-data">
+                                        <table class="form-table">
+                                            <tr>
+                                                <th valign="top"><?php _e( 'Upload zip file of new theme', 'src' ) ?></th>
+                                                <td valign="top">
+                                                    <input type="file" name="faq_pro_theme">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <p>
+                                            <input name="upload_theme" type="submit" class="button button-primary" value="<?php _e( 'Upload', 'src' ) ?>">
+                                        </p>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="postbox-container" id="postbox-container-1">
+                            <?php do_action( 'dg_settings_sidebar', 'free', 'faq-free' ); ?>
                         </div>
                     </div>
                 </div>
