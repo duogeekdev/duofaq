@@ -52,16 +52,16 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
             $this->twt = 'https://twitter.com/duogeekdev';
 
             $this->subscribe = '<center>
-<div id="mc_embed_signup"><form id="mc-embedded-subscribe-form" class="validate" action="//duogeek.us9.list-manage.com/subscribe/post?u=8c05a468e4f384bd52b5ec8c9&amp;id=a52e938757" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
-<div id="mc_embed_signup_scroll">
+                <div id="mc_embed_signup"><form id="mc-embedded-subscribe-form" class="validate" action="//duogeek.us9.list-manage.com/subscribe/post?u=8c05a468e4f384bd52b5ec8c9&amp;id=a52e938757" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+                <div id="mc_embed_signup_scroll">
 
-<input id="mce-EMAIL" class="email" style="width: 100%; text-align: center;" name="EMAIL" required="" type="email" value="" placeholder="Enter Your Email Address" /><br><br>
-<!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-<div style="position: absolute; left: -5000px;"><input tabindex="-1" name="b_8c05a468e4f384bd52b5ec8c9_a52e938757" type="text" value="" /></div>
-<div><input id="mc-embedded-subscribe" class="button avia-button  avia-icon_select-yes-left-icon avia-color-theme-color-subtle avia-size-large" name="subscribe" type="submit" value="Subscribe" /></div>
-</div>
-</form></div>
-</center>';
+                <input id="mce-EMAIL" class="email" style="width: 100%; text-align: center;" name="EMAIL" required="" type="email" value="" placeholder="Enter Your Email Address" /><br><br>
+                <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                <div style="position: absolute; left: -5000px;"><input tabindex="-1" name="b_8c05a468e4f384bd52b5ec8c9_a52e938757" type="text" value="" /></div>
+                <div><input id="mc-embedded-subscribe" class="button avia-button  avia-icon_select-yes-left-icon avia-color-theme-color-subtle avia-size-large" name="subscribe" type="submit" value="Subscribe" /></div>
+                </div>
+                </form></div>
+                </center>';
 
             $this->donate['faq-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="3RUMU6MJKGXWA"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
 
@@ -70,11 +70,19 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
             $this->donate['saa-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="WU52BX9T5ZWU8"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
 
             $this->donate['sig-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="BV9LLJ8GVH6S4"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
+            $this->donate['ecl-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="BV9LLJ8GVH6S4"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
+            $this->donate['ecab-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="BV9LLJ8GVH6S4"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
+            $this->donate['cam-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="BV9LLJ8GVH6S4"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
+            $this->donate['caw-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="BV9LLJ8GVH6S4"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
 
             $this->rating['faq-free'] = 'https://wordpress.org/support/view/plugin-reviews/duofaq-responsive-flat-simple-faq';
             $this->rating['dr-free'] = 'https://wordpress.org/support/view/plugin-reviews/domain-replace';
             $this->rating['saa-free'] = 'https://wordpress.org/support/view/plugin-reviews/simple-amazon-affiliate';
             $this->rating['sig-free'] = 'https://wordpress.org/support/view/plugin-reviews/simple-responsive-image-gallery';
+            $this->rating['ecl-free'] = 'https://wordpress.org/support/view/plugin-reviews/simple-responsive-image-gallery';
+            $this->rating['ecab-free'] = 'https://wordpress.org/support/view/plugin-reviews/simple-responsive-image-gallery';
+            $this->rating['cam-free'] = 'https://wordpress.org/support/view/plugin-reviews/simple-responsive-image-gallery';
+            $this->rating['caw-free'] = 'https://wordpress.org/support/view/plugin-reviews/simple-responsive-image-gallery';
 
 
 
@@ -512,22 +520,26 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
             if( count( $ltabs ) < 1 ){
                 echo '<p>You don\'t have any pro version yet!</p>';
             }else{
+                $i = 0;
                 echo '<h2 class="nav-tab-wrapper">';
                 foreach( $ltabs as $ltab ){
 
-                    $active = '';
-                    if( ! isset( $_REQUEST['tab'] ) || $_REQUEST['tab'] == strtolower( str_replace( ' ', '_', $ltab ) ) ){
+                    if( ! isset( $_REQUEST['tab'] ) && $i == 0){
                         $active = 'nav-tab-active';
+                    } elseif ( isset( $_REQUEST['tab'] ) && $_REQUEST['tab'] == strtolower( str_replace( ' ', '_', $ltab ) ) ) {
+                        $active = 'nav-tab-active';
+                    } else {
+                        $active = '';
                     }
 
                     echo '<a class="nav-tab '. $active .'" href="' . admin_url( 'admin.php?page=' . DUO_LICENSES_SLUG . '&tab=' . strtolower( str_replace( ' ', '_', $ltab ) ) ) . '">' . $ltab . '</a>';
-
+                    $i++;
                 }
                 echo '</h2>';
 
                 echo '<div class="lisence_wrap">';
 
-                $tab = strtolower( str_replace( ' ', '_', isset( $_REQUEST['tab'] ) ? $_REQUEST['tab'] : 'knowledge_base' ) );
+                $tab = strtolower( str_replace( ' ', '_', isset( $_REQUEST['tab'] ) ? $_REQUEST['tab'] : $ltabs[0] ) );
 
                 if( ! isset( $_REQUEST['tab'] ) || $_REQUEST['tab'] == $tab ){
                     do_action( 'dg_pro_license_form_' . $tab );
