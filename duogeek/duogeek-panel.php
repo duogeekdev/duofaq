@@ -12,7 +12,6 @@ if( ! defined( 'DUO_PANEL_SLUG' ) ) define( 'DUO_PANEL_SLUG', 'duogeek-panel' );
 if( ! defined( 'DUO_HELP_SLUG' ) ) define( 'DUO_HELP_SLUG', 'duogeek-panel-help' );
 if( ! defined( 'DUO_LICENSES_SLUG' ) ) define( 'DUO_LICENSES_SLUG', 'duogeek-pro-licenses' );
 if( ! defined( 'DUO_VERSION' ) ) define( 'DUO_VERSION', '1.1' );
-if( ! defined( 'DUO_SETTINGS_PAGE' ) ) define( 'DUO_SETTINGS_PAGE', 'admin.php?page=duogeek-panel' );
 
 
 if( ! class_exists( 'DuoGeekPlugins' ) ){
@@ -25,16 +24,6 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
 
         private $menuPos;
 
-        private $donate = array();
-
-        private $rating = array();
-
-        private $subscribe;
-
-        private $fb;
-
-        private $twt;
-
         protected $admin_enq = array();
 
         protected $front_enq = array();
@@ -46,45 +35,6 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
         protected $admin_pages = array();
 
         public function __construct() {
-
-            $this->fb = '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2Fpages%2FDuo-Geek%2F329994980535258&amp;width&amp;height=258&amp;colorscheme=dark&amp;show_faces=true&amp;header=false&amp;stream=false&amp;show_border=false&amp;appId=723137171103956" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:250px; height:258px;" allowTransparency="true"></iframe>';
-
-            $this->twt = 'https://twitter.com/duogeekdev';
-
-            $this->subscribe = '<center>
-                <div id="mc_embed_signup"><form id="mc-embedded-subscribe-form" class="validate" action="//duogeek.us9.list-manage.com/subscribe/post?u=8c05a468e4f384bd52b5ec8c9&amp;id=a52e938757" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
-                <div id="mc_embed_signup_scroll">
-
-                <input id="mce-EMAIL" class="email" style="width: 100%; text-align: center;" name="EMAIL" required="" type="email" value="" placeholder="Enter Your Email Address" /><br><br>
-                <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-                <div style="position: absolute; left: -5000px;"><input tabindex="-1" name="b_8c05a468e4f384bd52b5ec8c9_a52e938757" type="text" value="" /></div>
-                <div><input id="mc-embedded-subscribe" class="button avia-button  avia-icon_select-yes-left-icon avia-color-theme-color-subtle avia-size-large" name="subscribe" type="submit" value="Subscribe" /></div>
-                </div>
-                </form></div>
-                </center>';
-
-            $this->donate['faq-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="3RUMU6MJKGXWA"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
-
-            $this->donate['dr-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="YJ5Y9SAM9A4WQ"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
-
-            $this->donate['saa-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="WU52BX9T5ZWU8"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
-
-            $this->donate['sig-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="BV9LLJ8GVH6S4"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
-            $this->donate['ecl-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="BV9LLJ8GVH6S4"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
-            $this->donate['ecab-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="BV9LLJ8GVH6S4"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
-            $this->donate['cam-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="BV9LLJ8GVH6S4"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
-            $this->donate['caw-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="BV9LLJ8GVH6S4"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
-
-            $this->rating['faq-free'] = 'https://wordpress.org/support/view/plugin-reviews/duofaq-responsive-flat-simple-faq';
-            $this->rating['dr-free'] = 'https://wordpress.org/support/view/plugin-reviews/domain-replace';
-            $this->rating['saa-free'] = 'https://wordpress.org/support/view/plugin-reviews/simple-amazon-affiliate';
-            $this->rating['sig-free'] = 'https://wordpress.org/support/view/plugin-reviews/simple-responsive-image-gallery';
-            $this->rating['ecl-free'] = 'https://wordpress.org/support/view/plugin-reviews/simple-responsive-image-gallery';
-            $this->rating['ecab-free'] = 'https://wordpress.org/support/view/plugin-reviews/simple-responsive-image-gallery';
-            $this->rating['cam-free'] = 'https://wordpress.org/support/view/plugin-reviews/simple-responsive-image-gallery';
-            $this->rating['caw-free'] = 'https://wordpress.org/support/view/plugin-reviews/simple-responsive-image-gallery';
-
-
 
             $this->menuPos = DUO_MENU_POSITION;
 
@@ -349,7 +299,8 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
 
             }
 
-            $promo_content = wp_remote_get( 'http://duogeek.com/duo-promo.html' );
+            $protocol = is_ssl() ? 'https://' : 'http://';
+            $promo_content = wp_remote_get( $protocol . 'duogeek.com/duo-promo.html' );
 
             ?>
             <div class="wrap duo_prod_panel">
@@ -520,26 +471,22 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
             if( count( $ltabs ) < 1 ){
                 echo '<p>You don\'t have any pro version yet!</p>';
             }else{
-                $i = 0;
                 echo '<h2 class="nav-tab-wrapper">';
                 foreach( $ltabs as $ltab ){
 
-                    if( ! isset( $_REQUEST['tab'] ) && $i == 0){
+                    $active = '';
+                    if( ! isset( $_REQUEST['tab'] ) || $_REQUEST['tab'] == strtolower( str_replace( ' ', '_', $ltab ) ) ){
                         $active = 'nav-tab-active';
-                    } elseif ( isset( $_REQUEST['tab'] ) && $_REQUEST['tab'] == strtolower( str_replace( ' ', '_', $ltab ) ) ) {
-                        $active = 'nav-tab-active';
-                    } else {
-                        $active = '';
                     }
 
                     echo '<a class="nav-tab '. $active .'" href="' . admin_url( 'admin.php?page=' . DUO_LICENSES_SLUG . '&tab=' . strtolower( str_replace( ' ', '_', $ltab ) ) ) . '">' . $ltab . '</a>';
-                    $i++;
+
                 }
                 echo '</h2>';
 
                 echo '<div class="lisence_wrap">';
 
-                $tab = strtolower( str_replace( ' ', '_', isset( $_REQUEST['tab'] ) ? $_REQUEST['tab'] : $ltabs[0] ) );
+                $tab = strtolower( str_replace( ' ', '_', isset( $_REQUEST['tab'] ) ? $_REQUEST['tab'] : 'knowledge_base' ) );
 
                 if( ! isset( $_REQUEST['tab'] ) || $_REQUEST['tab'] == $tab ){
                     do_action( 'dg_pro_license_form_' . $tab );
@@ -598,66 +545,7 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
 
 
         public function dg_settings_sidebar_cb( $status, $plugin ){
-            ?>
-            <div class="dg-settings-sidebar-mods">
-                <div class="postbox">
-                    <h3 class="hndle"><span><?php _e( 'Support / Report a bug' ) ?></span></h3>
-                    <div class="inside centerAlign">
-                        <p>Please feel free to let us know if you got any bug to report. For any type of support query, be our free member to get access on our support forum. Free members get unlimited support for all of our products.</p>
-                        <p><a href="https://duogeek.com/register/" target="_blank" class="button button-primary">Get Support</a></p>
-                    </div>
-                </div>
-
-                <?php if( $status == 'free' ) { ?>
-                <div class="postbox">
-                    <h3 class="hndle"><span><?php _e( 'Buy us a coffee' ) ?></span></h3>
-                    <div class="inside centerAlign">
-                        <p>If you like the plugin, please buy us a coffee to inspire us to develop further.</p>
-                        <p><?php echo $this->donate[$plugin] ?></p>
-                    </div>
-                </div>
-
-                <div class="postbox">
-                    <h3 class="hndle"><span><?php _e( 'Rate us' ) ?></span></h3>
-                    <div class="inside centerAlign">
-                        <p>Please give us a 5 star review, if you like our products and support.</p>
-                        <p class="star-icons">
-                            <a href="<?php echo $this->rating[$plugin] ?>" target="_blank">
-                                <span class="dashicons dashicons-star-filled"></span>
-                                <span class="dashicons dashicons-star-filled"></span>
-                                <span class="dashicons dashicons-star-filled"></span>
-                                <span class="dashicons dashicons-star-filled"></span>
-                                <span class="dashicons dashicons-star-filled"></span>
-                            </a>
-                        </p>
-                    </div>
-                </div>
-                <?php } ?>
-
-                <div class="postbox">
-                    <h3 class="hndle"><span><?php _e( 'Subscribe to our NewsLetter' ) ?></span></h3>
-                    <div class="inside centerAlign">
-                        <p>Please join our newsletter program to get updates, offers, promotion and blog post. We don't send any spam emails and your email address is totally secured.</p>
-                        <p><?php echo $this->subscribe; ?></p>
-                    </div>
-                </div>
-
-                <div class="postbox">
-                    <h3 class="hndle"><span><?php _e( 'Join us on facebook' ) ?></span></h3>
-                    <div class="inside centerAlign">
-                        <?php echo $this->fb ?>
-                    </div>
-                </div>
-
-                <div class="postbox">
-                    <h3 class="hndle"><span><?php _e( 'Follow us on twitter' ) ?></span></h3>
-                    <div class="inside centerAlign">
-                        <a href="<?php echo $this->twt ?>" target="_blank" class="button button-secondary">Follow @duogeekdev <span class="dashicons dashicons-twitter" style="position: relative; top: 3px"></span></a>
-                    </div>
-                </div>
-
-            </div>
-            <?php
+            echo $status . $plugin;
         }
 
     }
