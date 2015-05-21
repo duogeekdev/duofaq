@@ -421,7 +421,7 @@ if( ! class_exists( 'DuoFAQ' ) ) {
         }
 
         public function cmp_post($a, $b){
-            if( property_exists($a, 'faq_order_no') ) {
+            if( property_exists($a, 'order_no') ) {
                 return (int)$a->faq_order_no - (int)$b->faq_order_no;
             } else {
                 return;
