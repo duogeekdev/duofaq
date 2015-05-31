@@ -11,7 +11,7 @@ License: GPL v2 or later
 
 if ( ! defined( 'ABSPATH' ) ) wp_die( __( 'Sorry hackers! This is not your place!', 'df' ) );
 
-if( ! defined( 'DUO_PLUGIN_URI' ) ) define( 'DUO_PLUGIN_URI', plugin_dir_url( __FILE__ ) );
+//if( ! defined( 'DUO_PLUGIN_URI' ) ) define( 'DUO_PLUGIN_URI', plugin_dir_url( __FILE__ ) );
 
 require 'duogeek/duogeek-panel.php';
 
@@ -41,7 +41,7 @@ function duo_faq_localization() {
 
 if( ! class_exists( 'DuoFAQ' ) ) {
 
-    class DuoFAQ extends customPostType{
+    class DuoFAQ extends DGCustomPostType{
 
         private $post_type = array();
         private $pro_themes_dir, $pro_themes_url;
@@ -629,7 +629,7 @@ if( ! class_exists( 'DuoFAQ' ) ) {
                             </div>
                         </div>
                         <div class="postbox-container" id="postbox-container-1">
-                            <?php do_action( 'dg_settings_sidebar', 'free', 'faq-free' ); ?>
+                            <?php do_action( 'dg_settings_sidebar', 'free', 'faq-free', '' ); ?>
                         </div>
                     </div>
                 </div>

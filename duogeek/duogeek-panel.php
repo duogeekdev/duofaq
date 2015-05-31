@@ -1,118 +1,219 @@
-<?php
+<?php /**
+ * GPL v2.0 or later License
+ * ===========
+ *
+ * Copyright (c) 2015 DuoGeek <contact@duogeek.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @category   Framework
+ * @package    DuoGeek
+ * @subpackage Master
+ * @author     DuoGeek <contact@duogeek.com>
+ * @copyright  2015 DuoGeek.
+ * @license    https://www.gnu.org/licenses/gpl-2.0.html  GPV v2.0 or later License
+ * @version    1.0
+ * @link       https://duogeek.com
+ */
 
 
-
-if ( ! defined( 'ABSPATH' ) ) wp_die( __( 'Sorry hackers! This is not your place!', 'dp' ) );
-
+/*
+ * Defines for the framework and plugins
+ */
+if( ! defined( 'DG_HACK_MSG' ) ) define( 'DG_HACK_MSG',  'Sorry hackers! This is not your place!' );
 if( ! defined( 'DUO_PLUGIN_DIR' ) ) define( 'DUO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-
-
 if( ! defined( 'DUO_MENU_POSITION' ) ) define( 'DUO_MENU_POSITION', '38' );
 if( ! defined( 'DUO_PANEL_SLUG' ) ) define( 'DUO_PANEL_SLUG', 'duogeek-panel' );
 if( ! defined( 'DUO_HELP_SLUG' ) ) define( 'DUO_HELP_SLUG', 'duogeek-panel-help' );
 if( ! defined( 'DUO_LICENSES_SLUG' ) ) define( 'DUO_LICENSES_SLUG', 'duogeek-pro-licenses' );
 if( ! defined( 'DUO_VERSION' ) ) define( 'DUO_VERSION', '1.1' );
 if( ! defined( 'DUO_SETTINGS_PAGE' ) ) define( 'DUO_SETTINGS_PAGE', 'admin.php?page=duogeek-panel' );
+if( ! defined( 'DUO_PLUGIN_URI' ) ) define( 'DUO_PLUGIN_URI', plugin_dir_url( __FILE__ ) );
+
+/*
+ * Restrict direct access
+ */
+if ( ! defined( 'ABSPATH' ) ) wp_die( DG_HACK_MSG );
+
+
+/**
+ * Including required files
+ */
+require_once 'lib/dg-helper.php';
+require_once 'lib/dg-custom-post-type.php';
+require_once 'lib/dg-options.php';
 
 
 if( ! class_exists( 'DuoGeekPlugins' ) ){
 
-    /*
-     * Framework Class
-     */
+	/**
+	 * Class as a framework
+	 *
+	 * @since 1.0
+	 */
+	class DuoGeekPlugins{
 
-    class DuoGeekPlugins{
+		/**
+		 * DuoGeek Menu Position
+		 *
+		 * @since 1.0
+		 * @access private
+		 * @var INT
+		 */
+		private $menuPos;
 
-        private $menuPos;
-
+		/**
+		 * Array of Donation links of free plugins
+		 *
+		 * @since 1.0
+		 * @access private
+		 * @var ARRAY
+		 */
         private $donate = array();
 
+        /**
+		 * Array of Ratings links of free plugins
+		 *
+		 * @since 1.0
+		 * @access private
+		 * @var ARRAY
+		 */
         private $rating = array();
 
+        /**
+		 * Subscription form at the sidebar
+		 *
+		 * @since 1.0
+		 * @access private
+		 * @var STRING
+		 */
         private $subscribe;
 
+        /**
+		 * Facebook Like iframe code
+		 *
+		 * @since 1.0
+		 * @access private
+		 * @var STRING
+		 */
         private $fb;
 
+        /**
+		 * Twitter profile URL
+		 *
+		 * @since 1.0
+		 * @access private
+		 * @var STRING
+		 */
         private $twt;
 
+        /**
+		 * Enqueue of styles and scripts in admin end
+		 *
+		 * @since 1.0
+		 * @access protected
+		 * @var ARRAY
+		 */
         protected $admin_enq = array();
 
+        /**
+		 * Enqueue of styles and scripts in front end
+		 *
+		 * @since 1.0
+		 * @access protected
+		 * @var ARRAY
+		 */
         protected $front_enq = array();
 
+        /**
+		 * Array of help tab content - shortcodes, hooks etc
+		 *
+		 * @since 1.0
+		 * @access public
+		 * @var ARRAY
+		 */
         public $help = array();
 
+        /**
+		 * Option variable for the framework
+		 *
+		 * @since 1.0
+		 * @access private
+		 * @var ARRAY
+		 */
         private $DuoOptions;
 
+        /**
+		 * Array of admin pages
+		 *
+		 * @since 1.0
+		 * @access protected
+		 * @var ARRAY
+		 */
         protected $admin_pages = array();
 
+
+
+        /**
+         * Notice durations
+         *
+         * @since 1.0
+         * @access protected
+         * @var ARRAY
+         */
+        protected $notice_duration = array();
+
+
+
+        /**
+		 * Class constructor
+		 *
+		 * @since 1.0
+		 * @access public
+		 */
         public function __construct() {
 
+            // Notice Duration
+            $this->notice_duration = array( 7, 15, 22, 30, 60, 90 );
+
+        	// Facebook Like Page
             $this->fb = '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2Fpages%2FDuo-Geek%2F329994980535258&amp;width&amp;height=258&amp;colorscheme=dark&amp;show_faces=true&amp;header=false&amp;stream=false&amp;show_border=false&amp;appId=723137171103956" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:250px; height:258px;" allowTransparency="true"></iframe>';
 
-            $this->twt = 'https://twitter.com/duogeekdev';
+            // Twitter profile page URL
+        	$this->twt = 'https://twitter.com/duogeekdev';
 
+            // Subscription form
             $this->subscribe = '<center>
-<div id="mc_embed_signup"><form id="mc-embedded-subscribe-form" class="validate" action="//duogeek.us9.list-manage.com/subscribe/post?u=8c05a468e4f384bd52b5ec8c9&amp;id=a52e938757" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
-<div id="mc_embed_signup_scroll">
+                <div id="mc_embed_signup"><form id="mc-embedded-subscribe-form" class="validate" action="//duogeek.us9.list-manage.com/subscribe/post?u=8c05a468e4f384bd52b5ec8c9&amp;id=a52e938757" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+                <div id="mc_embed_signup_scroll">
 
-<input id="mce-EMAIL" class="email" style="width: 100%; text-align: center;" name="EMAIL" required="" type="email" value="" placeholder="Enter Your Email Address" /><br><br>
-<!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-<div style="position: absolute; left: -5000px;"><input tabindex="-1" name="b_8c05a468e4f384bd52b5ec8c9_a52e938757" type="text" value="" /></div>
-<div><input id="mc-embedded-subscribe" class="button avia-button  avia-icon_select-yes-left-icon avia-color-theme-color-subtle avia-size-large" name="subscribe" type="submit" value="Subscribe" /></div>
-</div>
-</form></div>
-</center>';
+                <input id="mce-EMAIL" class="email" style="width: 100%; text-align: center;" name="EMAIL" required="" type="email" value="" placeholder="Enter Your Email Address" /><br><br>
+                <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                <div style="position: absolute; left: -5000px;"><input tabindex="-1" name="b_8c05a468e4f384bd52b5ec8c9_a52e938757" type="text" value="" /></div>
+                <div><input id="mc-embedded-subscribe" class="button avia-button  avia-icon_select-yes-left-icon avia-color-theme-color-subtle avia-size-large button button-primary" name="subscribe" type="submit" value="Subscribe" /></div>
+                </div>
+                </form></div>
+                </center>';
 
-            $this->donate['faq-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="3RUMU6MJKGXWA"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
-
-            $this->donate['dr-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="YJ5Y9SAM9A4WQ"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
-
-            $this->donate['saa-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="WU52BX9T5ZWU8"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
-
-            $this->donate['sig-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="BV9LLJ8GVH6S4"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
-
-            $this->donate['ecab-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="9M5XDLDSSNK5U">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form>
-';
-            $this->donate['ccdw-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="FPRWA8TLD2ATE">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form>
-';
-            $this->donate['cam-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="6A5XM274KPAVA">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form>
-';
-            $this->donate['ecl-free'] = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="RHMKC3R8ETV7Y">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form>
-';
-
-
-
-            $this->rating['faq-free'] = 'https://wordpress.org/support/view/plugin-reviews/duofaq-responsive-flat-simple-faq';
-            $this->rating['dr-free'] = 'https://wordpress.org/support/view/plugin-reviews/domain-replace';
-            $this->rating['saa-free'] = 'https://wordpress.org/support/view/plugin-reviews/simple-amazon-affiliate';
-            $this->rating['sig-free'] = 'https://wordpress.org/support/view/plugin-reviews/simple-responsive-image-gallery';
-            
-            $this->rating['ecab-free'] = 'https://wordpress.org/support/view/plugin-reviews/easy-custom-admin-bar';
-            $this->rating['ccdw-free'] = 'https://wordpress.org/support/view/plugin-reviews/create-custom-dashboard-widget';
-            $this->rating['cam-free'] = 'https://wordpress.org/support/view/plugin-reviews/custom-admin-menu';
-            $this->rating['ecl-free'] = 'https://wordpress.org/support/view/plugin-reviews/easy-custom-login';
-
-
+            // Donation links for free plugins
+            $this->donate = '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="XBW47E6H8NM6Y"><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"></form>';
 
             $this->menuPos = DUO_MENU_POSITION;
 
@@ -122,19 +223,89 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
             add_action( 'admin_enqueue_scripts', array( $this, 'admin_styles_scripts' ) );
             add_action( 'wp_enqueue_scripts', array( $this, 'front_styles_scripts' ) );
             add_action( 'wp_footer', array( $this, 'dg_equal_column' ) );
-            add_action( 'dg_settings_sidebar', array( $this, 'dg_settings_sidebar_cb' ), 10, 2 );
+            add_action( 'dg_settings_sidebar', array( $this, 'dg_settings_sidebar_cb' ), 10, 3 );
 
-            add_shortcode( 'dg_grid', array( $this, 'dg_grid_cb' ) );
-            add_shortcode( 'dg_grid_class', array( $this, 'dg_grid_class_cb' ) );
+            add_action( 'admin_notices', array( &$this, 'dg_admin_notice' ) );
+            add_action( 'admin_action_set_dg_cookie', array( $this, 'set_dg_cookie_cb' ) );
 
         }
 
+
+        /**
+		 * Intialization
+		 *
+		 * @since 1.0
+		 * @access public
+		 */
         public function DuoPlugin_init() {
             $this->DuoOptions = get_option( 'DuoOptions' );
             $this->admin_pages = apply_filters( 'duogeek_panel_pages', array() );
             $this->admin_pages = array_merge( $this->admin_pages, array( DUO_PANEL_SLUG,DUO_HELP_SLUG  ) );
         }
 
+        /**
+         * Set DG cookies for notices
+         *
+         * @since 1.0
+         * @access public
+         */
+        public function set_dg_cookie_cb() {
+
+            $time = get_user_meta( get_current_user_id(), 'dg_c_time', true );
+            if( ! isset( $time ) ) $time = 0;
+            else $time++;
+
+            if( $time > 5 ) $time = 5;
+
+            if( isset( $_GET['dismiss_dg_notice'] ) ) {
+                $time = $_GET['dismiss_dg_notice'];
+                if( $time > 5 ) $time = 5;
+                setcookie( 'dismiss_dg_notice', 'yes', time() + ( 86400 * $this->notice_duration[$time] ), "/" );
+                update_user_meta( get_current_user_id(), 'dg_c_time', $time );
+            }
+
+            wp_redirect( urldecode( $_GET['redirect_to'] ) );
+            die();
+
+        }
+
+
+        /**
+         * DG Admin Notice
+         *
+         * @since 1.0
+         * @access public
+         */
+        public function dg_admin_notice()  {
+
+            $time = get_user_meta( get_current_user_id(), 'dg_c_time', true );
+            if( ! isset( $time ) ) $time = 0;
+            else $time++;
+
+            if( $time > 5 ) $time = 5;
+
+            if( ! isset( $_COOKIE['dismiss_dg_notice'] ) ) {
+                $message = 'Got a WordPress question? Feel free to ask us. We have a dedicated support team to answer all of your questions. We also have an exclusive support zone where all members will get upto 100% discount to all of our plugins. So, what are you waiting for? <a style="color: #ccc; text-decoration: underline" href="http://utm.io/181784" target="_blank">Ask us now!</a>';
+            ?>
+
+            <div class="dg-notice updated">
+                <p><?php echo $message; ?></p>
+                <div class="dg-dismiss">
+                    <a href="<?php echo admin_url( 'admin.php?action=set_dg_cookie&dismiss_dg_notice=' . $time . '&redirect_to=' . urlencode( curPageURL( true ) ) ); ?>">Dismiss</a>
+                </div>
+            </div>
+            <?php
+            }
+
+        }
+
+
+        /**
+		 * Enqueue styles and scripts for admin end
+		 *
+		 * @since 1.0
+		 * @access public
+		 */
         public function admin_styles_scripts() {
 
             $styles = array(
@@ -147,32 +318,16 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
                     'condition' => $this->DuoOptions['fontAwesome'] != 1
                 ),
                 array(
-                    'name' => 'icheck-all',
-                    'src' => DUO_PLUGIN_URI . 'duogeek/inc/icheck/skins/square/_all.css',
+                    'name' => 'dgstrap_css',
+                    'src' => DUO_PLUGIN_URI . 'assets/css/dgstrap.css',
                     'dep' => '',
                     'version' => DUO_VERSION,
                     'media' => 'all',
-                    'condition' => isset( $_REQUEST['page'] ) && in_array( $_REQUEST['page'], $this->admin_pages )
+                    'condition' => true
                 ),
                 array(
-                    'name' => 'icheck-css',
-                    'src' => DUO_PLUGIN_URI . 'duogeek/inc/icheck/skins/square/blue.css',
-                    'dep' => '',
-                    'version' => DUO_VERSION,
-                    'media' => 'all',
-                    'condition' => isset( $_REQUEST['page'] ) && in_array( $_REQUEST['page'], $this->admin_pages )
-                ),
-                array(
-                    'name' => 'select-css',
-                    'src' => DUO_PLUGIN_URI . 'duogeek/inc/selectize.css',
-                    'dep' => '',
-                    'version' => DUO_VERSION,
-                    'media' => 'all',
-                    'condition' => isset( $_REQUEST['page'] ) && in_array( $_REQUEST['page'], $this->admin_pages )
-                ),
-                array(
-                    'name' => 'duogeek-css',
-                    'src' => DUO_PLUGIN_URI . 'duogeek/inc/duogeek.css',
+                    'name' => 'dg-admin-css',
+                    'src' => DUO_PLUGIN_URI . 'assets/css/dg-admin.css',
                     'dep' => '',
                     'version' => DUO_VERSION,
                     'media' => 'all',
@@ -186,29 +341,8 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
 
             $scripts = array(
                 array(
-                    'name' => 'icheck',
-                    'src' => DUO_PLUGIN_URI . 'duogeek/inc/icheck/icheck.min.js',
-                    'dep' => array( 'jquery' ),
-                    'version' => DUO_VERSION,
-                    'footer' => true,
-                    'condition' => isset( $_REQUEST['page'] ) && in_array( $_REQUEST['page'], $this->admin_pages )
-                    /*'localize' => true,
-                    'localize_data' => array(
-                        'object' => 'obj_name',
-                        'passed_data' => array( '100' )
-                    )*/
-                ),
-                array(
-                    'name' => 'select-js',
-                    'src' => DUO_PLUGIN_URI . 'duogeek/inc/selectize.js',
-                    'dep' => array( 'jquery' ),
-                    'version' => DUO_VERSION,
-                    'footer' => true,
-                    'condition' => isset( $_REQUEST['page'] ) && in_array( $_REQUEST['page'], $this->admin_pages )
-                ),
-                array(
                     'name' => 'duogeek-js',
-                    'src' => DUO_PLUGIN_URI . 'duogeek/inc/duogeek.js',
+                    'src' => DUO_PLUGIN_URI . 'assets/js/dg-admin.js',
                     'dep' => array( 'jquery' ),
                     'version' => DUO_VERSION,
                     'footer' => true,
@@ -265,6 +399,13 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
         }
 
 
+
+        /**
+		 * Enqueue styles and scripts for front end
+		 *
+		 * @since 1.0
+		 * @access public
+		 */
         public function front_styles_scripts() {
 
             $styles = array(
@@ -277,24 +418,33 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
                     'condition' => $this->DuoOptions['fontAwesome'] != 1
                 ),
                 array(
-                    'name' => 'sn-animate-css',
-                    'src' => DUO_PLUGIN_URI . 'duogeek/inc/animate.css',
-                    'dep' => '',
-                    'version' => DUO_VERSION,
-                    'media' => 'all',
-                    'condition' => $this->DuoOptions['animate'] != 1
-                ),
-                array(
-                    'name' => 'dg-grid-css',
-                    'src' => DUO_PLUGIN_URI . 'duogeek/inc/dg-grid.css',
+                    'name' => 'dgstrap_css',
+                    'src' => DUO_PLUGIN_URI . 'assets/css/dgstrap.css',
                     'dep' => '',
                     'version' => DUO_VERSION,
                     'media' => 'all',
                     'condition' => true
-                )
+                ),
+                array(
+                    'name' => 'dg-front',
+                    'src' => DUO_PLUGIN_URI . 'assets/css/dg-front.css',
+                    'dep' => '',
+                    'version' => DUO_VERSION,
+                    'media' => 'all',
+                    'condition' => true
+                ),
             );
 
-            $scripts = array();
+            $scripts = array(
+                array(
+                    'name' => 'duogeek-js',
+                    'src' => DUO_PLUGIN_URI . 'assets/js/dg-front.js',
+                    'dep' => array( 'jquery' ),
+                    'version' => DUO_VERSION,
+                    'footer' => true,
+                    'condition' => true
+                )
+            );
 
             $this->front_enq = apply_filters( 'front_scripts_styles', array() );
 
@@ -342,14 +492,28 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
         }
 
 
+
+        /**
+		 * Registering DuoGeek Menu Page
+		 *
+		 * @since 1.0
+		 * @access public
+		 */
         public function register_duogeek_menu_page()
         {
             if( empty( $GLOBALS['admin_page_hooks']['duogeek-panel'] ) ) {
-                add_menu_page(__('DuoGeek', 'dp'), __('DuoGeek', 'dp'), 'manage_options', DUO_PANEL_SLUG, array($this, 'duogeek_panel_cb'), '', $this->menuPos);
+                add_menu_page( __('DuoGeek', 'dp'), __('DuoGeek', 'dp'), 'manage_options', DUO_PANEL_SLUG, array($this, 'duogeek_panel_cb'), DUO_PLUGIN_URI . 'assets/images/dg-20-20.png', $this->menuPos );
             }
         }
 
 
+
+        /**
+		 * DuoGeek Panel Page Settings
+		 *
+		 * @since 1.0
+		 * @access public
+		 */
         public function duogeek_panel_cb() {
 
             $duo = $this->DuoOptions;
@@ -377,8 +541,7 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
 
             }
 
-            $protocol = is_ssl() ? 'https://' : 'http://';
-            $promo_content = wp_remote_get( $protocol . 'duogeek.com/duo-promo.html' );
+            $promo_content = wp_remote_get( 'http://duogeek.com/duo-promo.html' );
 
             ?>
             <div class="wrap duo_prod_panel">
@@ -417,6 +580,13 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
         }
 
 
+
+        /**
+		 * Registering DuoGeek Sub Menu Page
+		 *
+		 * @since 1.0
+		 * @access public
+		 */
         public function register_duogeek_submenu_page() {
 
             $submenus = apply_filters( 'duogeek_submenu_pages', array() );
@@ -436,6 +606,13 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
         }
 
 
+
+        /**
+		 * Generate DuoGeek Help page
+		 *
+		 * @since 1.0
+		 * @access public
+		 */
         public function duogeek_panel_help_cb() {
 
             $this->help = array(
@@ -537,6 +714,13 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
         }
 
 
+
+        /**
+		 * Generate DuoGeek License page
+		 *
+		 * @since 1.0
+		 * @access public
+		 */
         public function duogeek_panel_licenses_cb() {
             ?>
 
@@ -549,22 +733,26 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
             if( count( $ltabs ) < 1 ){
                 echo '<p>You don\'t have any pro version yet!</p>';
             }else{
+                $i = 0;
                 echo '<h2 class="nav-tab-wrapper">';
                 foreach( $ltabs as $ltab ){
 
-                    $active = '';
-                    if( ! isset( $_REQUEST['tab'] ) || $_REQUEST['tab'] == strtolower( str_replace( ' ', '_', $ltab ) ) ){
+                    if( ! isset( $_REQUEST['tab'] ) && $i == 0){
                         $active = 'nav-tab-active';
+                    } elseif ( isset( $_REQUEST['tab'] ) && $_REQUEST['tab'] == strtolower( str_replace( ' ', '_', $ltab ) ) ) {
+                        $active = 'nav-tab-active';
+                    } else {
+                        $active = '';
                     }
 
                     echo '<a class="nav-tab '. $active .'" href="' . admin_url( 'admin.php?page=' . DUO_LICENSES_SLUG . '&tab=' . strtolower( str_replace( ' ', '_', $ltab ) ) ) . '">' . $ltab . '</a>';
-
+                    $i++;
                 }
                 echo '</h2>';
 
                 echo '<div class="lisence_wrap">';
 
-                $tab = strtolower( str_replace( ' ', '_', isset( $_REQUEST['tab'] ) ? $_REQUEST['tab'] : 'knowledge_base' ) );
+                $tab = strtolower( str_replace( ' ', '_', isset( $_REQUEST['tab'] ) ? $_REQUEST['tab'] : $ltabs[0] ) );
 
                 if( ! isset( $_REQUEST['tab'] ) || $_REQUEST['tab'] == $tab ){
                     do_action( 'dg_pro_license_form_' . $tab );
@@ -580,24 +768,93 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
         }
 
 
-        public function dg_grid_cb( $atts, $content = '' ){
-            return '<div class="dg-grid dg-grid-shortcode">' . do_shortcode( $content ) . '</div>';
-        }
 
-        public function dg_grid_class_cb( $atts, $content = '' ){
-            $atts = shortcode_atts( array(
-                'desktop' => '1-1',
-                'ipad' => '1-1',
-                'ipad_mini' => '1-1',
-                'mobile' => '1-1'
-            ), $atts, 'dg_grid_class' );
+        /**
+		 * Generate DuoGeek Settings page Sidebar
+		 *
+		 * @since 1.0
+		 * @access public
+		 */
+        public function dg_settings_sidebar_cb( $status, $plugin, $rating ){
 
-            return '<div class="dg_grid-shortcode-col dg-col-'. $atts['desktop'] .' dg-col-md-'. $atts['ipad'] .' dg-col-sm-'. $atts['ipad_mini'] .' dg-col-xx-'. $atts['mobile'] .'">' . do_shortcode( $content ) . '</div>';
-
-        }
-
-        public function dg_equal_column() {
             ?>
+            <div class="dg-settings-sidebar-mods">
+                <div class="postbox">
+                    <h3 class="hndle"><span><?php _e( 'Support / Report a bug', 'eventpress' ) ?></span></h3>
+                    <div class="inside centerAlign">
+                        <p>Please feel free to let us know if you got any bug to report. For any type of support query, be our free member to get access on our support forum. Free members get unlimited support for all of our products.</p>
+                        <p><a href="https://duogeek.com/register/" target="_blank" class="button button-primary">Get Support</a></p>
+                    </div>
+                </div>
+
+                <?php if( $status == 'free' ) { ?>
+	                <div class="postbox">
+	                    <h3 class="hndle"><span><?php _e( 'Buy us a coffee', 'eventpress' ) ?></span></h3>
+	                    <div class="inside centerAlign">
+	                        <p>If you like the plugin, please buy us a coffee to inspire us to develop further.</p>
+	                        <p><?php echo $this->donate ?></p>
+	                    </div>
+	                </div>
+
+
+	                <div class="postbox">
+	                    <h3 class="hndle"><span><?php _e( 'Rate us', 'eventpress' ) ?></span></h3>
+	                    <div class="inside centerAlign">
+	                        <p>Please give us a 5 star review, if you like our products and support.</p>
+	                        <p class="star-icons">
+	                            <a href="<?php echo $rating ?>" target="_blank">
+	                                <span class="dashicons dashicons-star-filled"></span>
+	                                <span class="dashicons dashicons-star-filled"></span>
+	                                <span class="dashicons dashicons-star-filled"></span>
+	                                <span class="dashicons dashicons-star-filled"></span>
+	                                <span class="dashicons dashicons-star-filled"></span>
+	                            </a>
+	                        </p>
+	                    </div>
+	                </div>
+
+
+                <?php } ?>
+
+                <div class="postbox">
+                    <h3 class="hndle"><span><?php _e( 'Subscribe to our NewsLetter', 'eventpress' ) ?></span></h3>
+                    <div class="inside centerAlign">
+                        <p>Please join our newsletter program to get updates, offers, promotion and blog post. We don't send any spam emails and your email address is totally secured.</p>
+                        <p><?php echo $this->subscribe; ?></p>
+                    </div>
+                </div>
+
+                <div class="postbox">
+                    <h3 class="hndle"><span><?php _e( 'Join us on facebook', 'eventpress' ) ?></span></h3>
+                    <div class="inside centerAlign">
+                        <?php echo $this->fb ?>
+                    </div>
+                </div>
+
+                <div class="postbox">
+                    <h3 class="hndle"><span><?php _e( 'Follow us on twitter', 'eventpress' ) ?></span></h3>
+                    <div class="inside centerAlign">
+                        <a href="<?php echo $this->twt ?>" target="_blank" class="button button-secondary">Follow @duogeekdev <span class="dashicons dashicons-twitter" style="position: relative; top: 3px"></span></a>
+                    </div>
+                </div>
+
+            </div>
+            <?php
+
+        }
+
+
+
+        /**
+		 * JS Code for equal column, needs to be moved into separate js file
+		 *
+		 * @since 1.0
+		 * @access public
+		 */
+        public function dg_equal_column() {
+
+            ?>
+            <div class="dg-popup-wrap"><div class="dg-popup"><div class="dg-pop-close"></div><div class="dg-pop-content"><div class="dg-pop-content-details"></div></div></div></div>
             <script type="text/javascript">
                 jQuery(function($) {
                     function equalHeight(group) {
@@ -621,75 +878,8 @@ if( ! class_exists( 'DuoGeekPlugins' ) ){
             <?php
         }
 
+	}
 
-        public function dg_settings_sidebar_cb( $status, $plugin ){
-            ?>
-            <div class="dg-settings-sidebar-mods">
-                <div class="postbox">
-                    <h3 class="hndle"><span><?php _e( 'Support / Report a bug' ) ?></span></h3>
-                    <div class="inside centerAlign">
-                        <p>Please feel free to let us know if you got any bug to report. For any type of support query, be our free member to get access on our support forum. Free members get unlimited support for all of our products.</p>
-                        <p><a href="https://duogeek.com/register/" target="_blank" class="button button-primary">Get Support</a></p>
-                    </div>
-                </div>
-
-                <?php if( $status == 'free' ) { ?>
-                <div class="postbox">
-                    <h3 class="hndle"><span><?php _e( 'Buy us a coffee' ) ?></span></h3>
-                    <div class="inside centerAlign">
-                        <p>If you like the plugin, please buy us a coffee to inspire us to develop further.</p>
-                        <p><?php echo $this->donate[$plugin] ?></p>
-                    </div>
-                </div>
-
-                <div class="postbox">
-                    <h3 class="hndle"><span><?php _e( 'Rate us' ) ?></span></h3>
-                    <div class="inside centerAlign">
-                        <p>Please give us a 5 star review, if you like our products and support.</p>
-                        <p class="star-icons">
-                            <a href="<?php echo $this->rating[$plugin] ?>" target="_blank">
-                                <span class="dashicons dashicons-star-filled"></span>
-                                <span class="dashicons dashicons-star-filled"></span>
-                                <span class="dashicons dashicons-star-filled"></span>
-                                <span class="dashicons dashicons-star-filled"></span>
-                                <span class="dashicons dashicons-star-filled"></span>
-                            </a>
-                        </p>
-                    </div>
-                </div>
-                <?php } ?>
-
-                <div class="postbox">
-                    <h3 class="hndle"><span><?php _e( 'Subscribe to our NewsLetter' ) ?></span></h3>
-                    <div class="inside centerAlign">
-                        <p>Please join our newsletter program to get updates, offers, promotion and blog post. We don't send any spam emails and your email address is totally secured.</p>
-                        <p><?php echo $this->subscribe; ?></p>
-                    </div>
-                </div>
-
-                <div class="postbox">
-                    <h3 class="hndle"><span><?php _e( 'Join us on facebook' ) ?></span></h3>
-                    <div class="inside centerAlign">
-                        <?php echo $this->fb ?>
-                    </div>
-                </div>
-
-                <div class="postbox">
-                    <h3 class="hndle"><span><?php _e( 'Follow us on twitter' ) ?></span></h3>
-                    <div class="inside centerAlign">
-                        <a href="<?php echo $this->twt ?>" target="_blank" class="button button-secondary">Follow @duogeekdev <span class="dashicons dashicons-twitter" style="position: relative; top: 3px"></span></a>
-                    </div>
-                </div>
-
-            </div>
-            <?php
-        }
-
-    }
-
-    new DuoGeekPlugins();
-
-    require_once 'helper.php';
-    require_once 'class.customPostType.php';
+	new DuoGeekPlugins();
 
 }
